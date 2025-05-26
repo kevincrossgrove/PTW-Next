@@ -1,9 +1,15 @@
 import Image from "next/image";
+import LoginCard from "../components/auth/LoginCard";
+import { AppThemeSelector } from "../components/app/AppThemeSelector";
+import RegisterCard from "../components/auth/RegisterCard";
 
 export default function Home() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <AppThemeSelector />
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+        <RegisterCard />
+        <LoginCard />
         <Image
           className="dark:invert"
           src="/next.svg"
