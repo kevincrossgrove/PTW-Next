@@ -28,7 +28,7 @@ export default function LoginCard() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="flex flex-col justify-center items-center">
-        <a href="https://www.trainwithptw.com/">
+        <a href="https://www.trainwithptw.com/" tabIndex={-1}>
           <Image src="/ptw.png" alt="PTW Logo" width={80} height={80} />
         </a>
         <CardTitle className="pt-3 text-xl">
@@ -118,14 +118,14 @@ export default function LoginCard() {
   async function googleLogin() {
     setLoadingGoogle(true);
 
-    const data = await authClient.signIn.social({
+    await authClient.signIn.social({
       provider: "google",
+      newUserCallbackURL: "/dashboard",
       callbackURL: "/dashboard",
+      errorCallbackURL: "/login",
     });
 
-    setLoadingGoogle(false);
-
-    console.log(data);
+    setTimeout(() => setLoadingGoogle(false), 500);
   }
 
   async function emailPasswordLogin() {

@@ -15,6 +15,8 @@ import { authClient } from "../../lib/auth-client";
 import { useRouter } from "next/navigation";
 import { AppAlertDestructive } from "../app/AppAlertDestructive";
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function SignupCard() {
   const [email, setEmail] = useState("");
@@ -23,23 +25,46 @@ export default function SignupCard() {
   const [last, setLast] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const router = useRouter();
 
   return (
-    <Card className="w-full max-w-lg">
+    <Card className="w-full max-w-sm">
+      <CardHeader className="flex flex-col justify-center items-center">
+        <a href="https://www.trainwithptw.com/" tabIndex={-1}>
+          <Image src="/ptw.png" alt="PTW Logo" width={80} height={80} />
+        </a>
+        <CardTitle className="pt-3 text-xl">
+          Sign up for PTW Sports Training
+        </CardTitle>
+      </CardHeader>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           emailPasswordSignup();
         }}
       >
-        <CardHeader className="pb-4">
-          <CardTitle>Create an account</CardTitle>
-          <CardDescription>Create an account to use PTW</CardDescription>
-        </CardHeader>
-        <CardContent className="pt-4 pb-6">
+        <CardContent className="pt-2 pb-4">
+          <Button
+            variant="outline"
+            className="w-full bg-transparent"
+            disabled={loadingGoogle}
+            type="button"
+            onClick={googleLogin}
+          >
+            <Image src="/google.svg" height={20} width={20} alt="Google Icon" />
+            {loadingGoogle
+              ? "Continuing with Google..."
+              : "Continue with Google"}
+          </Button>
+          {/* OR separator */}
+          <div className="flex items-center my-7">
+            <span className="flex-grow border-t border-accent"></span>
+            <span className="mx-2 text-sm text-muted-foreground">OR</span>
+            <span className="flex-grow border-t border-accent"></span>
+          </div>
           <div className="flex flex-col gap-5">
             <div>
               <Label htmlFor="name" className="mb-2">
@@ -107,15 +132,34 @@ export default function SignupCard() {
               loading={submitting}
               disabled={submitting}
               loadingText="Signing up..."
-              className="w-36"
+              className="w-full"
             >
               Sign Up
             </Button>
           </div>
+          <CardDescription className="text-sm pt-1">
+            Already have an account?{" "}
+            <Link href={"/login"} className="text-foreground underline">
+              Sign in
+            </Link>
+          </CardDescription>
         </CardFooter>
       </form>
     </Card>
   );
+
+  async function googleLogin() {
+    setLoadingGoogle(true);
+
+    await authClient.signIn.social({
+      provider: "google",
+      newUserCallbackURL: "/dashboard",
+      callbackURL: "/dashboard",
+      errorCallbackURL: "/login",
+    });
+
+    setTimeout(() => setLoadingGoogle(false), 500);
+  }
 
   async function emailPasswordSignup() {
     if (!email || !password || !first || !last) {
