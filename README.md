@@ -18,3 +18,16 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 1. Install Docker Desktop
 2. `docker run -d --name mongo-ptw -p 27018:27018 mongo:latest mongod --port 27018` 27017 is usually the default port for MongoDB, but I have another mongodb instance running on port 27017 already. That's why I'm using 27018 as the port in the command.
+
+## User Roles
+
+- Player, Parent, Trainer
+- Admin is a separate role that can be assigned to a user
+- Player/Parent Portal
+- Trainer Portal
+- Admin Portal
+
+## Admin Portal
+
+- This is where trainers, and admins can be managed.
+- Trainers / Admins must be invited.
