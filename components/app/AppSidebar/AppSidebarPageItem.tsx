@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { SidebarMenuButton } from "../../ui/sidebar";
 import { NotebookText } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 interface Props {
   icon?: React.ReactNode;
@@ -9,12 +12,11 @@ interface Props {
   isActive?: boolean;
 }
 
-export default function AppSidebarPageItem({
-  icon,
-  href,
-  title,
-  isActive,
-}: Props) {
+export default function AppSidebarPageItem({ icon, href, title }: Props) {
+  const pathname = usePathname();
+
+  const isActive = pathname === href;
+
   return (
     <SidebarMenuButton asChild title={title} isActive={isActive}>
       <Link href={href} className="flex items-center gap-2">

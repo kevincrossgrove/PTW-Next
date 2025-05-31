@@ -35,7 +35,7 @@ export default function AdminSidebar() {
             />
             <AppSidebarPageItem
               icon={<ShieldUser />}
-              title="Admin"
+              title="Admins"
               href="/admin/admin-users"
             />
             <AppSidebarPageItem
