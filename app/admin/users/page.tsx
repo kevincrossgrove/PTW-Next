@@ -6,7 +6,9 @@ import { AppTable } from "@/components/app/AppTable";
 export default async function AdminUserManagementPage() {
   const data = await authClient.admin.listUsers({
     query: {
-      limit: 10,
+      filterField: "role",
+      filterOperator: "eq",
+      filterValue: "admin",
     },
     fetchOptions: { headers: await headers() },
   });
