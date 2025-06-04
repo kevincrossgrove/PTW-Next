@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/connect-to-db";
 import { EMAIL_REGEX } from "@/lib/constants";
 import { NextRequest, NextResponse } from "next/server";
 import dayjs from "dayjs";
+import { AdminInviteResponse, InviteRecord } from "../Types";
 
 // Inviting an Admin to the Platform
 // Invites are trackable, as we are creating an Invite Record in the database
@@ -28,17 +29,24 @@ export async function POST(request: NextRequest) {
 
     const createdAt = dayjs();
 
-    const invitePayload = {
+    const invitePayload: InviteRecord = {
       Email: email,
+      Role: "admin",
       ExpiresAt: createdAt.add(1, "day").toISOString(),
       CreatedAt: createdAt.toISOString(),
       UpdatedAt: createdAt.toISOString(),
       CreatedBy: "",
     };
 
-    const invite = await db.collection("Invites").insertOne(invitePayload);
+    const invite = await db
+      .collection<InviteRecord>("Invites")
+      .insertOne(invitePayload);
 
-    return NextResponse.json({ inviteID: invite.insertedId });
+    const adminInviteResponse: AdminInviteResponse = {
+      inviteID: invite.insertedId.toString(),
+    };
+
+    return NextResponse.json(adminInviteResponse);
   } catch (err) {
     console.error("Unexepected error while inviting admin:", err);
 

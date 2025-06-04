@@ -1,3 +1,4 @@
+import { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
 import { z } from "zod/v4-mini";
 
 export const AppFetchError = z.object({
@@ -10,7 +11,7 @@ export type AppFetchErrorType = z.infer<typeof AppFetchError>;
 export interface AppFetchProps {
   url: string;
   method: "GET" | "POST" | "PUT" | "DELETE";
-  headers?: Record<string, string>;
+  headers?: Record<string, string> | ReadonlyHeaders;
   body?: string | FormData;
 }
 
@@ -27,6 +28,7 @@ export async function appFetch<T>({
       ...headers,
     },
     body,
+    credentials: "include",
   });
 
   if (!response.ok) {

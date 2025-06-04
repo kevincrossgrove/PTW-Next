@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
@@ -11,9 +10,14 @@ import {
 export function AppShareLink({ url }: { url: string }) {
   const [copied, setCopied] = useState(false);
 
+  const finalURL =
+    url && typeof window !== "undefined"
+      ? `${window.location.origin}${url}`
+      : "";
+
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(finalURL);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -23,12 +27,16 @@ export function AppShareLink({ url }: { url: string }) {
 
   return (
     <TooltipProvider>
-      <div className="flex items-center space-x-2 mb-4">
-        <Input readOnly value={url} className="flex-1" autoFocus={false} />
+      <div className="grid grid-cols-[1fr_auto] items-center gap-2 mb-4">
+        <div className="min-w-0 text-xs border border-primary bg-muted rounded-lg overflow-hidden whitespace-nowrap truncate px-2 py-2">
+          {finalURL}
+        </div>
         <Tooltip>
           <TooltipTrigger>
-            <Button onClick={handleCopy} variant="outline" className="w-28">
-              {copied ? "Copied!" : "Copy Link"}
+            <Button asChild variant="outline">
+              <div className="w-28" onClick={handleCopy}>
+                {copied ? "Copied!" : "Copy Link"}
+              </div>
             </Button>
           </TooltipTrigger>
           <TooltipContent>

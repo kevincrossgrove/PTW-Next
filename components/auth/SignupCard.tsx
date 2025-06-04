@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "../../lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AppAlertDestructive } from "../app/AppAlertDestructive";
 import { useState } from "react";
 import Image from "next/image";
@@ -29,6 +29,8 @@ export default function SignupCard() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const inviteID = searchParams.get("inviteID");
 
   return (
     <Card className="w-full max-w-sm">
@@ -154,7 +156,7 @@ export default function SignupCard() {
     await authClient.signIn.social({
       provider: "google",
       newUserCallbackURL: "/dashboard",
-      callbackURL: "/dashboard",
+      callbackURL: inviteID ? `/invite/${inviteID}` : undefined,
       errorCallbackURL: "/login",
     });
 
@@ -172,6 +174,7 @@ export default function SignupCard() {
       email: email,
       password: password,
       name: `${first} ${last}`,
+      callbackURL: inviteID ? `/invite/${inviteID}` : undefined,
     });
 
     if (error) {

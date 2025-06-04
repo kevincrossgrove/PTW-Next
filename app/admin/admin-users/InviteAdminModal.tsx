@@ -1,3 +1,4 @@
+import { AdminInviteResponse } from "@/app/api/admin/Types";
 import AppAlert from "@/components/app/AppAlert";
 import AppModal, { AppModalProps } from "@/components/app/AppModal";
 import { AppShareLink } from "@/components/app/AppSharelink";
@@ -17,7 +18,7 @@ export default function InviteAdminModal({
   const [invitingAdmin, setInvitingAdmin] = useState(false);
   const [error, setError] = useState("");
 
-  const [inviteAdminLink, setInviteAdminLink] = useState("");
+  const [adminInviteID, setAdminInviteID] = useState("");
 
   // Use this Modal once the Amazon SES API is implemented
   // return (
@@ -79,20 +80,24 @@ export default function InviteAdminModal({
       content={<div></div>}
       footer={
         <div className="w-full">
-          <AppShareLink url={inviteAdminLink} />
-          <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button
-              variant="default"
-              onClick={inviteAdmin}
-              loadingText="Inviting..."
-              loading={invitingAdmin}
-            >
-              Create Invite Link
-            </Button>
-          </div>
+          {adminInviteID && (
+            <AppShareLink url={`/admin/invite/${adminInviteID}`} />
+          )}
+          {!adminInviteID && (
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button
+                variant="default"
+                onClick={inviteAdmin}
+                loadingText="Inviting..."
+                loading={invitingAdmin}
+              >
+                Create Invite Link
+              </Button>
+            </div>
+          )}
           {error && (
             <AppAlert
               title={error}
@@ -106,6 +111,7 @@ export default function InviteAdminModal({
   );
 
   function handleClose() {
+    setAdminInviteID("");
     onClose();
   }
 
@@ -122,15 +128,13 @@ export default function InviteAdminModal({
     try {
       setInvitingAdmin(true);
 
-      const { inviteLink } = await appFetch<{ inviteLink: string }>({
+      const { inviteID } = await appFetch<AdminInviteResponse>({
         url: "/api/admin/invite",
         method: "POST",
         body: JSON.stringify({ email: inviteAdminEmail.trim() }),
       });
 
-      setInviteAdminLink(inviteLink);
-
-      handleClose();
+      setAdminInviteID(inviteID);
     } catch (error) {
       const parsedError = AppFetchError.safeParse(error);
 
