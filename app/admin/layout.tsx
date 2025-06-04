@@ -1,9 +1,9 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AdminSidebar from "./AdminSidebar";
-import MobileHeader from "./MobileHeader";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import AdminMobileHeader from "@/components/admin/AdminMobileHeader";
 
 export default async function Layout({
   children,
@@ -18,7 +18,7 @@ export default async function Layout({
   return (
     <>
       <SidebarProvider className="flex-col md:flex-row">
-        <MobileHeader />
+        <AdminMobileHeader />
         <AdminSidebar />
         <main className="w-full">{children}</main>
       </SidebarProvider>

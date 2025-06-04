@@ -3,5 +3,5 @@ export default function AdminPageContainer({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="p-8">{children}</div>;
+  return <div className="p-4 md:p-8">{children}</div>;
 }

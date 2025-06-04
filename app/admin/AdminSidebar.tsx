@@ -10,15 +10,25 @@ import {
   ChartSpline,
   ChevronDown,
   Heart,
+  Home,
+  Mails,
   ShieldUser,
   Trophy,
   Users,
 } from "lucide-react";
-import React from "react";
 
 export default function AdminSidebar() {
   return (
     <AppSidebar>
+      <SidebarGroup>
+        <SidebarGroupLabel>PTW Admin</SidebarGroupLabel>
+        <AppSidebarPageItem icon={<Home />} title="Home" href="/admin/home" />
+        <AppSidebarPageItem
+          icon={<Mails />}
+          title="Invites"
+          href="/admin/invites"
+        />
+      </SidebarGroup>
       <Collapsible defaultOpen className="group/collapsible">
         <SidebarGroup>
           <SidebarGroupLabel asChild>
