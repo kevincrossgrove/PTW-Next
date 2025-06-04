@@ -3,6 +3,7 @@ import AdminHeader from "./AdminHeader";
 import { adminColumns } from "./AdminColumns";
 import { authClient } from "@/lib/auth-client";
 import { headers } from "next/headers";
+import AdminPageContainer from "@/components/admin/AdminPageContainer";
 
 export default async function AdminUsersPage() {
   const data = await authClient.admin.listUsers({
@@ -17,9 +18,9 @@ export default async function AdminUsersPage() {
   const users = Array.isArray(data.data?.users) ? data.data?.users : [];
 
   return (
-    <div className="p-8">
+    <AdminPageContainer>
       <AdminHeader />
       <AppTable columns={adminColumns} data={users} />
-    </div>
+    </AdminPageContainer>
   );
 }

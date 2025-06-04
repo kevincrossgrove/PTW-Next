@@ -1,8 +1,9 @@
 import { AppTable } from "@/components/app/AppTable";
-import React from "react";
 import { playerColumns } from "./PlayerColumns";
 import { authClient } from "@/lib/auth-client";
 import { headers } from "next/headers";
+import AdminPageContainer from "@/components/admin/AdminPageContainer";
+import AdminPageHeader from "@/components/admin/AdminPageHeader";
 
 export default async function PlayersPage() {
   const data = await authClient.admin.listUsers({
@@ -17,8 +18,9 @@ export default async function PlayersPage() {
   const users = Array.isArray(data.data?.users) ? data.data?.users : [];
 
   return (
-    <div className="p-8">
+    <AdminPageContainer>
+      <AdminPageHeader title="Players" />
       <AppTable columns={playerColumns} data={users} />
-    </div>
+    </AdminPageContainer>
   );
 }
