@@ -16,6 +16,7 @@ import { authClient } from "../../lib/auth-client";
 import { AppAlertDestructive } from "../app/AppAlertDestructive";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginCard() {
   const [email, setEmail] = useState("");
@@ -24,6 +25,9 @@ export default function LoginCard() {
   const [errorMessage, setErrorMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [loadingGoogle, setLoadingGoogle] = useState(false);
+
+  const search = useSearchParams();
+  const inviteID = search.get("inviteID");
 
   return (
     <Card className="w-full max-w-sm">
@@ -106,7 +110,10 @@ export default function LoginCard() {
           </div>
           <CardDescription className="text-sm pt-1">
             New here?{" "}
-            <Link href={"/signup"} className="text-foreground underline">
+            <Link
+              href={`/signup${inviteID ? `?inviteID=${inviteID}` : ""}`}
+              className="text-foreground underline"
+            >
               Create an account
             </Link>
           </CardDescription>
@@ -120,8 +127,8 @@ export default function LoginCard() {
 
     await authClient.signIn.social({
       provider: "google",
-      newUserCallbackURL: "/dashboard",
-      callbackURL: "/dashboard",
+      newUserCallbackURL: inviteID ? `/invite/${inviteID}` : "/dashboard",
+      callbackURL: inviteID ? `/invite/${inviteID}` : "/dashboard",
       errorCallbackURL: "/login",
     });
 

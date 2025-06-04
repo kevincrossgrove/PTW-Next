@@ -155,8 +155,8 @@ export default function SignupCard() {
 
     await authClient.signIn.social({
       provider: "google",
-      newUserCallbackURL: "/dashboard",
-      callbackURL: inviteID ? `/invite/${inviteID}` : undefined,
+      newUserCallbackURL: inviteID ? `/invite/${inviteID}` : "/dashboard",
+      callbackURL: inviteID ? `/invite/${inviteID}` : "/dashboard",
       errorCallbackURL: "/login",
     });
 
@@ -174,7 +174,6 @@ export default function SignupCard() {
       email: email,
       password: password,
       name: `${first} ${last}`,
-      callbackURL: inviteID ? `/invite/${inviteID}` : undefined,
     });
 
     if (error) {
@@ -189,6 +188,6 @@ export default function SignupCard() {
 
     setTimeout(() => setSubmitting(false), 500);
     console.log(data);
-    router.push("/dashboard");
+    router.push(inviteID ? `/invite/${inviteID}` : "/dashboard");
   }
 }

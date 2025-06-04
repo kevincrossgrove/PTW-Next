@@ -1,24 +1,29 @@
 import { AcceptInviteResponse } from "@/app/api/admin/Types";
 import { Button } from "@/components/ui/button";
-import { appFetch } from "@/lib/app-fetch";
+import { appFetch, AppFetchError } from "@/lib/app-fetch";
 import { auth } from "@/lib/auth";
 import { Params } from "next/dist/server/request/params";
 import { headers as headas } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 
 // Used to accept Invites
-export default async function AcceptInvitePage({ params }: { params: Params }) {
+export default async function AcceptInvitePage({
+  params,
+}: {
+  params: Promise<Params>;
+}) {
   const { inviteID } = await params;
   const headers = await headas();
   const session = await auth.api.getSession({ headers });
 
   if (!session?.user) {
-    return redirect("/login?inviteID=" + inviteID);
+    redirect(`${process.env.BETTER_AUTH_URL}/login?inviteID=${inviteID}`);
   }
 
-  if (!inviteID) return redirect("/dashboard");
+  if (!inviteID) redirect(`${process.env.BETTER_AUTH_URL}/dashboard`);
 
   let error;
 
@@ -36,13 +41,30 @@ export default async function AcceptInvitePage({ params }: { params: Params }) {
     });
 
     if (result.success) {
-      return redirect(result.redirectTo);
+      // See https://nextjs.org/docs/app/api-reference/functions/redirect as to why we can't call redirect here. (Hint: It's because we are in a try/catch block)
+      throw {
+        redirectTo: `${process.env.BETTER_AUTH_URL}${result.redirectTo}`,
+      };
     } else {
       error = result.error;
     }
   } catch (err) {
-    console.log(err);
-    error = "An unexpected error occurred.";
+    const parsedRedirectTo = z
+      .object({ redirectTo: z.string() })
+      .safeParse(err);
+
+    if (parsedRedirectTo.success) {
+      redirect(parsedRedirectTo.data.redirectTo);
+    }
+
+    const parsedError = AppFetchError.safeParse(err);
+
+    if (parsedError.success) {
+      error = parsedError.data.message;
+    } else {
+      console.log(err);
+      error = "An unexpected error occurred.";
+    }
   }
 
   return (

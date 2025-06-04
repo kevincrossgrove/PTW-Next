@@ -80,9 +80,7 @@ export default function InviteAdminModal({
       content={<div></div>}
       footer={
         <div className="w-full">
-          {adminInviteID && (
-            <AppShareLink url={`/admin/invite/${adminInviteID}`} />
-          )}
+          {adminInviteID && <AppShareLink url={`/invite/${adminInviteID}`} />}
           {!adminInviteID && (
             <div className="flex gap-2 justify-end">
               <Button variant="outline" onClick={handleClose}>

@@ -20,14 +20,17 @@ export async function PUT(
     const user = session?.user;
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(null, {
+        status: 401,
+        statusText: "Unauthorized",
+      });
     }
 
     if (!inviteID) {
-      return NextResponse.json(
-        { error: "Invalid invite ID provided." },
-        { status: 400 }
-      );
+      return NextResponse.json(null, {
+        status: 400,
+        statusText: "Invalid invite ID provided.",
+      });
     }
 
     // Fetch invite record from the database, ensure it is still valid
@@ -46,10 +49,11 @@ export async function PUT(
     });
 
     if (!inviteRecord) {
-      return NextResponse.json(
-        { error: "Invite record not found." },
-        { status: 404 }
-      );
+      return NextResponse.json(null, {
+        status: 404,
+        statusText:
+          "The invite was not found. Please request a new invite link.",
+      });
     }
 
     if (inviteRecord.ExpiresAt < dayjs().toISOString()) {
@@ -74,10 +78,10 @@ export async function PUT(
             { $set: { role: inviteRecord.Role } }
           );
       } catch {
-        return NextResponse.json(
-          { error: "An unexpected error occurred." },
-          { status: 500 }
-        );
+        return NextResponse.json(null, {
+          status: 500,
+          statusText: "Server error. Please try again.",
+        });
       }
     }
 
@@ -92,9 +96,9 @@ export async function PUT(
   } catch (err) {
     console.error("Unexepected error while inviting admin:", err);
 
-    return NextResponse.json(
-      { error: "Server error. Please try again." },
-      { status: 500 }
-    );
+    return NextResponse.json(null, {
+      status: 500,
+      statusText: "Server error. Please try again.",
+    });
   }
 }

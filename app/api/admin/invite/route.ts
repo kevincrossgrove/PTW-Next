@@ -12,10 +12,10 @@ export async function POST(request: NextRequest) {
     const { email } = (await request.json()) as { email?: string };
 
     if (!email || typeof email !== "string") {
-      return NextResponse.json(
-        { error: "Missing required field: email" },
-        { status: 400 }
-      );
+      return NextResponse.json(null, {
+        status: 400,
+        statusText: "Missing required field: email",
+      });
     }
     if (!EMAIL_REGEX.test(email)) {
       return NextResponse.json(null, {
@@ -50,9 +50,9 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     console.error("Unexepected error while inviting admin:", err);
 
-    return NextResponse.json(
-      { error: "Server error. Please try again." },
-      { status: 500 }
-    );
+    return NextResponse.json(null, {
+      status: 500,
+      statusText: "Server error. Please try again.",
+    });
   }
 }
