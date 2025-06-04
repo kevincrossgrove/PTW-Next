@@ -16,7 +16,7 @@ import { authClient } from "../../lib/auth-client";
 import { AppAlertDestructive } from "../app/AppAlertDestructive";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginCard() {
   const [email, setEmail] = useState("");
@@ -26,6 +26,7 @@ export default function LoginCard() {
   const [submitting, setSubmitting] = useState(false);
   const [loadingGoogle, setLoadingGoogle] = useState(false);
 
+  const router = useRouter();
   const search = useSearchParams();
   const inviteID = search.get("inviteID");
 
@@ -157,6 +158,8 @@ export default function LoginCard() {
       console.log(error);
       return;
     }
+
+    router.push(inviteID ? `/invite/${inviteID}` : "/dashboard");
 
     setTimeout(() => setSubmitting(false), 500);
 
