@@ -1,5 +1,10 @@
-import React from "react";
+import AdminPageContainer from "@/components/admin/AdminPageContainer";
+import AdminPageHeader from "@/components/admin/AdminPageHeader";
 
 export default function AdminHomePage() {
-  return <div>Admin Home Page</div>;
+  return (
+    <AdminPageContainer>
+      <AdminPageHeader title="Admin Home" />
+    </AdminPageContainer>
+  );
 }
