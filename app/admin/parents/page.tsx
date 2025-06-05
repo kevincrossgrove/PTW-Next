@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { parentColumns } from "./ParentColumns";
 import AdminPageContainer from "@/components/admin/AdminPageContainer";
 import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import { AdminPageTime } from "../AdminCacheOptions";
 
 export default async function ParentsPage() {
   const data = await authClient.admin.listUsers({
@@ -12,7 +13,10 @@ export default async function ParentsPage() {
       filterOperator: "eq",
       filterValue: "parent",
     },
-    fetchOptions: { headers: await headers() },
+    fetchOptions: {
+      headers: await headers(),
+      ...AdminPageTime,
+    },
   });
 
   const users = Array.isArray(data.data?.users) ? data.data?.users : [];

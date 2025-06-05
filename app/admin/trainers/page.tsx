@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { trainerColumns } from "./TrainerColumns";
 import AdminPageContainer from "@/components/admin/AdminPageContainer";
 import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import { AdminPageTime } from "../AdminCacheOptions";
 
 export default async function TrainersManagementPage() {
   const data = await authClient.admin.listUsers({
@@ -12,7 +13,10 @@ export default async function TrainersManagementPage() {
       filterOperator: "eq",
       filterValue: "trainer",
     },
-    fetchOptions: { headers: await headers() },
+    fetchOptions: {
+      headers: await headers(),
+      ...AdminPageTime,
+    },
   });
 
   const users = Array.isArray(data.data?.users) ? data.data?.users : [];

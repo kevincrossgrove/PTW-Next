@@ -4,6 +4,7 @@ import { authClient } from "@/lib/auth-client";
 import { headers } from "next/headers";
 import AdminPageContainer from "@/components/admin/AdminPageContainer";
 import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import { AdminPageTime } from "../AdminCacheOptions";
 
 export default async function PlayersPage() {
   const data = await authClient.admin.listUsers({
@@ -12,7 +13,10 @@ export default async function PlayersPage() {
       filterOperator: "eq",
       filterValue: "player",
     },
-    fetchOptions: { headers: await headers() },
+    fetchOptions: {
+      headers: await headers(),
+      ...AdminPageTime,
+    },
   });
 
   const users = Array.isArray(data.data?.users) ? data.data?.users : [];

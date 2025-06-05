@@ -4,11 +4,15 @@ import { columns } from "./UsersColumns";
 import { AppTable } from "@/components/app/AppTable";
 import AdminPageContainer from "@/components/admin/AdminPageContainer";
 import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import { AdminPageTime } from "../AdminCacheOptions";
 
 export default async function AdminUserManagementPage() {
   const data = await authClient.admin.listUsers({
     query: {},
-    fetchOptions: { headers: await headers() },
+    fetchOptions: {
+      headers: await headers(),
+      ...AdminPageTime,
+    },
   });
 
   const users = Array.isArray(data.data?.users) ? data.data?.users : [];
