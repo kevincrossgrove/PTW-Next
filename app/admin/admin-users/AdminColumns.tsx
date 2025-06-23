@@ -1,5 +1,6 @@
 "use client";
 
+import { AppSelect } from "@/components/app/AppSelect/AppSelect";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { UserWithRole } from "better-auth/plugins";
@@ -38,5 +39,22 @@ export const adminColumns: ColumnDef<UserWithRole>[] = [
   {
     accessorKey: "role",
     header: "Role",
+  },
+  {
+    accessorKey: "appRole",
+    header: "App Role",
+    cell: ({ cell }) => {
+      console.log(cell);
+      return (
+        <AppSelect
+          hideArrows
+          data={[]}
+          labelKey={"label"}
+          valueKey={"value"}
+          colorKey={"color"}
+          className="w-32"
+        />
+      );
+    },
   },
 ];

@@ -1,5 +1,5 @@
 import AppLoader from "@/components/app/AppLoader";
 
 export default function AdminPageLoading() {
-  return <AppLoader />;
+  return <AppLoader className="mt-16 md:mt-0" />;
 }

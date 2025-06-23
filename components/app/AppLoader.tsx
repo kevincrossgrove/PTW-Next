@@ -1,8 +1,14 @@
 import Image from "next/image";
+import { twMerge } from "tailwind-merge";
 
-export default function AppLoader() {
+export default function AppLoader({ className }: { className?: string }) {
   return (
-    <div className="flex items-center justify-center h-full w-full">
+    <div
+      className={twMerge(
+        "flex items-center justify-center h-full w-full",
+        className
+      )}
+    >
       {/* 
         Wrap the <Image> in a fixed-size, relative container so that
         our shimmer overlay (absolutely positioned) has the same dimensions. 
