@@ -5,12 +5,18 @@ import {
 } from "@/components/ui/sidebar";
 import AppSidebarHeader from "./AppSidebarHeader";
 
-export function AppSidebar({ children }: { children: React.ReactNode }) {
+export function AppSidebar({
+  children,
+  footer,
+}: {
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+}) {
   return (
     <Sidebar collapsible="icon">
       <AppSidebarHeader />
       <SidebarContent>{children}</SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>{footer}</SidebarFooter>
     </Sidebar>
   );
 }

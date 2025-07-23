@@ -1,9 +1,32 @@
 "use client";
 
-import { AppSelect } from "@/components/app/AppSelect/AppSelect";
+import SingleSelect from "@/components/app/AppSelect/SingleSelect";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { UserWithRole } from "better-auth/plugins";
+
+const appRoles = [
+  {
+    label: "Admin",
+    value: "admin",
+    color: "red",
+  },
+  {
+    label: "Trainer",
+    value: "trainer",
+    color: "blue",
+  },
+  {
+    label: "Parent",
+    value: "parent",
+    color: "green",
+  },
+  {
+    label: "Player",
+    value: "player",
+    color: "yellow",
+  },
+];
 
 export const adminColumns: ColumnDef<UserWithRole>[] = [
   {
@@ -44,15 +67,13 @@ export const adminColumns: ColumnDef<UserWithRole>[] = [
     accessorKey: "appRole",
     header: "App Role",
     cell: ({ cell }) => {
-      console.log(cell);
+      console.log(cell.getValue());
       return (
-        <AppSelect
-          hideArrows
-          data={[]}
+        <SingleSelect
+          data={appRoles}
           labelKey={"label"}
           valueKey={"value"}
           colorKey={"color"}
-          className="w-32"
         />
       );
     },

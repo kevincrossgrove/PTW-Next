@@ -20,7 +20,7 @@ export default async function Layout({
       <SidebarProvider className="flex-col md:flex-row">
         <AdminMobileHeader />
         <AdminSidebar />
-        <main className="w-full h-full">{children}</main>
+        <main className="w-full h-screen">{children}</main>
       </SidebarProvider>
     </>
   );

@@ -1,9 +1,8 @@
 "use client";
 
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -20,7 +19,6 @@ import {
 import { useState } from "react";
 
 interface Props<T> {
-  hideArrows?: boolean;
   placeholder?: string;
   searchPlaceholder?: string;
   labelKey: keyof T;
@@ -28,29 +26,39 @@ interface Props<T> {
   colorKey: keyof T;
   dataName?: string;
   data: T[];
+  CustomTrigger?: (props: {
+    displayValue: string | undefined;
+  }) => React.ReactNode;
   className?: string;
 }
 
 export function AppSelect<T>({
-  hideArrows,
   placeholder = "Select...",
   searchPlaceholder,
   labelKey,
   valueKey,
-  colorKey,
   dataName = "item",
   data,
-  className,
+  CustomTrigger,
 }: Props<T & { [key: string]: string }>) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
 
-  console.log(colorKey);
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
+        {CustomTrigger && (
+          <div>
+            <CustomTrigger
+              displayValue={
+                value
+                  ? data.find((item) => item[valueKey] === value)?.[labelKey]
+                  : placeholder
+              }
+            />
+          </div>
+        )}
+        {/* <Button
           variant="outline"
           role="combobox"
           aria-expanded={open}
@@ -60,7 +68,7 @@ export function AppSelect<T>({
             ? data.find((item) => item[valueKey] === value)?.[labelKey]
             : placeholder}
           {!hideArrows && <ChevronsUpDown className="opacity-50" />}
-        </Button>
+        </Button> */}
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>

@@ -16,7 +16,10 @@ export default function DashboardPage() {
         <h1 className="text-4xl font-bold mb-8">Dashboard</h1>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
-            <Link href="/admin/home">Admin Dashboard</Link>
+            <Link href="/admin/home">Admins</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/trainer">Trainers</Link>
           </Button>
           <Button onClick={signout}>Sign Out</Button>
         </div>
