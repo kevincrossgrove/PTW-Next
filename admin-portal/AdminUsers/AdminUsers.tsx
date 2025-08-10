@@ -8,6 +8,7 @@ import { adminColumns } from "./AdminColumns";
 import AdminHeader from "./AdminHeader";
 
 export default function AdminUsers() {
+  const { data: session } = authClient.useSession();
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
@@ -43,7 +44,10 @@ export default function AdminUsers() {
   return (
     <AdminPageContainer>
       <AdminHeader />
-      <AppTable columns={adminColumns} data={data || []} />
+      <AppTable 
+        columns={adminColumns(session?.user?.id)} 
+        data={data || []} 
+      />
     </AdminPageContainer>
   );
 }

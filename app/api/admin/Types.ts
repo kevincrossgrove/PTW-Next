@@ -25,6 +25,8 @@ export interface InviteRecord extends DefaultFields {
 // Type for creating new invite records (without _id)
 export type CreateInviteRecord = Omit<InviteRecord, "_id">;
 
+export type AppRole = "trainer" | "parent" | "player" | "admin";
+
 export interface UserRecord {
   _id: ObjectId;
   name: string;
@@ -34,7 +36,7 @@ export interface UserRecord {
   createdAt: string;
   updatedAt: string;
   role: "admin" | "user"; // Core role used by Better Auth
-  appRole: "trainer" | "parent" | "player" | "admin"; // Specific roles for the application itself
+  appRole: AppRole; // Specific roles for the application itself
 }
 
 export interface UpdateUserResponse {
@@ -42,13 +44,15 @@ export interface UpdateUserResponse {
 }
 
 // Zod schema for validating user update payload
-export const UpdateUserSchema = z.object({
-  name: z.string().optional(),
-  email: z.string().email().optional(),
-  emailVerified: z.boolean().optional(),
-  image: z.string().nullable().optional(),
-  role: z.enum(["admin", "user"]).optional(),
-  appRole: z.enum(["trainer", "parent", "player", "admin"]).optional(),
-}).strict(); // strict() ensures no extra fields are allowed
+export const UpdateUserSchema = z
+  .object({
+    name: z.string().optional(),
+    email: z.string().email().optional(),
+    emailVerified: z.boolean().optional(),
+    image: z.string().nullable().optional(),
+    role: z.enum(["admin", "user"]).optional(),
+    appRole: z.enum(["trainer", "parent", "player", "admin"]).optional(),
+  })
+  .strict(); // strict() ensures no extra fields are allowed
 
 export type UpdateUserPayload = z.infer<typeof UpdateUserSchema>;
