@@ -24,12 +24,17 @@ interface Props<T> {
   labelKey: keyof T;
   valueKey: keyof T;
   colorKey: keyof T;
+  descriptionKey?: keyof T;
   dataName?: string;
   data: T[];
   CustomTrigger?: (props: {
     displayValue: string | undefined;
+    className?: string;
   }) => React.ReactNode;
   className?: string;
+  disableSearch?: boolean;
+  value?: string;
+  onValueChange?: (value: string) => void;
 }
 
 export function AppSelect<T>({
@@ -37,12 +42,22 @@ export function AppSelect<T>({
   searchPlaceholder,
   labelKey,
   valueKey,
+  colorKey,
+  descriptionKey,
   dataName = "item",
   data,
   CustomTrigger,
+  disableSearch,
+  value: controlledValue,
+  onValueChange,
 }: Props<T & { [key: string]: string }>) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [internalValue, setInternalValue] = useState("");
+
+  const value = controlledValue !== undefined ? controlledValue : internalValue;
+  const setValue = onValueChange || setInternalValue;
+
+  const selectedItem = data.find((item) => item[valueKey] === value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -50,11 +65,8 @@ export function AppSelect<T>({
         {CustomTrigger && (
           <div>
             <CustomTrigger
-              displayValue={
-                value
-                  ? data.find((item) => item[valueKey] === value)?.[labelKey]
-                  : placeholder
-              }
+              displayValue={selectedItem?.[labelKey] || placeholder}
+              className={getColorCSS(selectedItem?.[colorKey])}
             />
           </div>
         )}
@@ -70,12 +82,14 @@ export function AppSelect<T>({
           {!hideArrows && <ChevronsUpDown className="opacity-50" />}
         </Button> */}
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[240px] p-0">
         <Command>
-          <CommandInput
-            placeholder={searchPlaceholder || placeholder}
-            className="h-9"
-          />
+          {!disableSearch && (
+            <CommandInput
+              placeholder={searchPlaceholder || placeholder}
+              className="h-9"
+            />
+          )}
           <CommandList>
             <CommandEmpty>No {dataName} found.</CommandEmpty>
             <CommandGroup>
@@ -88,13 +102,20 @@ export function AppSelect<T>({
                     setOpen(false);
                   }}
                 >
-                  {item[labelKey]}
-                  <Check
-                    className={cn(
-                      "ml-auto",
-                      value === item[valueKey] ? "opacity-100" : "opacity-0"
-                    )}
-                  />
+                  <div className="flex items-center gap-2">
+                    <div>
+                      {item[labelKey]}
+                      <div className="text-foreground/60 text-xs">
+                        {descriptionKey ? item[descriptionKey] : ""}
+                      </div>
+                    </div>
+                    <Check
+                      className={cn(
+                        "ml-auto",
+                        value === item[valueKey] ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -103,4 +124,16 @@ export function AppSelect<T>({
       </PopoverContent>
     </Popover>
   );
+}
+
+function getColorCSS(color: string | undefined) {
+  if (!color) return "";
+
+  if (color === "red") return "bg-red-500";
+  if (color === "blue") return "bg-blue-500";
+  if (color === "green") return "bg-green-500";
+  if (color === "yellow") return "bg-yellow-500";
+  if (color === "purple") return "bg-purple-500";
+  if (color === "pink") return "bg-pink-500";
+  if (color === "gray") return "bg-gray-500";
 }

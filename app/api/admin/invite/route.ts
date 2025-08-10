@@ -2,13 +2,19 @@ import { connectToDatabase } from "@/lib/connect-to-db";
 import { EMAIL_REGEX } from "@/lib/constants";
 import { NextRequest, NextResponse } from "next/server";
 import dayjs from "dayjs";
-import { AdminInviteResponse, InviteRecord } from "../Types";
+import { AdminInviteResponse, CreateInviteRecord } from "../Types";
+import { checkAdminRole } from "@/lib/admin-auth";
 
 // Inviting an Admin to the Platform
 // Invites are trackable, as we are creating an Invite Record in the database
 // The Invite Record ID will be used in the Invite URL - Which will be sent to the Admin via Email
 export async function POST(request: NextRequest) {
   try {
+    // Check if user has admin role
+    const authError = await checkAdminRole(request);
+
+    if (authError) return authError;
+
     const { email } = (await request.json()) as { email?: string };
 
     if (!email || typeof email !== "string") {
@@ -29,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     const createdAt = dayjs();
 
-    const invitePayload: InviteRecord = {
+    const invitePayload: CreateInviteRecord = {
       Email: email,
       Role: "admin",
       ExpiresAt: createdAt.add(1, "day").toISOString(),
@@ -39,7 +45,7 @@ export async function POST(request: NextRequest) {
     };
 
     const invite = await db
-      .collection<InviteRecord>("Invites")
+      .collection("Invites")
       .insertOne(invitePayload);
 
     const adminInviteResponse: AdminInviteResponse = {

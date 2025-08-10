@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/app/AppSidebar/AppSidebar";
-import AppSidebarPageItem from "@/components/app/AppSidebar/AppSidebarPageItem";
+import AppSidebarPageItem from "./AppSidebarPageItem";
 import {
   Collapsible,
   CollapsibleContent,
@@ -22,11 +22,11 @@ export default function AdminSidebar() {
     <AppSidebar>
       <SidebarGroup>
         <SidebarGroupLabel>PTW Admin</SidebarGroupLabel>
-        <AppSidebarPageItem icon={<Home />} title="Home" href="/admin/home" />
+        <AppSidebarPageItem icon={<Home />} title="Home" to="/admin/home" />
         <AppSidebarPageItem
           icon={<Mails />}
           title="Invites"
-          href="/admin/invites"
+          to="/admin/invites"
         />
       </SidebarGroup>
       <Collapsible defaultOpen className="group/collapsible">
@@ -41,27 +41,27 @@ export default function AdminSidebar() {
             <AppSidebarPageItem
               icon={<Users />}
               title="All Users"
-              href="/admin/users"
+              to="/admin/users"
             />
             <AppSidebarPageItem
               icon={<ShieldUser />}
               title="Admins"
-              href="/admin/admin-users"
+              to="/admin/admin-users"
             />
             <AppSidebarPageItem
               icon={<ChartSpline />}
               title="Trainers"
-              href="/admin/trainers"
+              to="/admin/trainers"
             />
             <AppSidebarPageItem
               icon={<Heart />}
               title="Parents"
-              href="/admin/parents"
+              to="/admin/parents"
             />
             <AppSidebarPageItem
               icon={<Trophy />}
               title="Players"
-              href="/admin/players"
+              to="/admin/players"
             />
           </CollapsibleContent>
         </SidebarGroup>
