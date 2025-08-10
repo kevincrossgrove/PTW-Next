@@ -6,7 +6,7 @@ import SingleSelect from "@/components/app/AppSelect/SingleSelect";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { UserWithRole } from "better-auth/plugins";
+import { User } from "better-auth";
 import { toast } from "sonner";
 
 const appRoles = [
@@ -32,11 +32,24 @@ const appRoles = [
   },
 ];
 
+const roles = [
+  {
+    label: "Admin",
+    value: "admin",
+    color: "red",
+  },
+  {
+    label: "User",
+    value: "user",
+    color: "gray",
+  },
+];
+
 function AppRoleCell({
   user,
   currentAppRole,
 }: {
-  user: UserWithRole;
+  user: User;
   currentAppRole: string;
 }) {
   const updateAdmin = useUpdateAdmin();
@@ -100,7 +113,75 @@ function AppRoleCell({
   );
 }
 
-export const adminColumns = (currentUserId?: string): ColumnDef<UserWithRole>[] => [
+function RoleCell({
+  user,
+  currentRole,
+  currentUserId,
+}: {
+  user: User;
+  currentRole: string;
+  currentUserId?: string;
+}) {
+  const updateAdmin = useUpdateAdmin();
+  const queryClient = useQueryClient();
+  const isCurrentUser = user.id === currentUserId;
+
+  const handleRoleChange = async (newRole: string) => {
+    if (isCurrentUser) return toast.error("You cannot change your own role");
+
+    const previousRole = currentRole;
+
+    try {
+      await updateAdmin.mutateAsync({
+        userID: user.id,
+        payload: {
+          role: newRole as "admin" | "user",
+        },
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+
+      // Show success toast with undo button
+      toast.success(`Updated ${user.name}'s role to ${newRole}`, {
+        duration: 5000,
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            try {
+              await updateAdmin.mutateAsync({
+                userID: user.id,
+                payload: {
+                  role: previousRole as "admin" | "user",
+                },
+              });
+              queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+              toast.success(`Reverted ${user.name}'s role to ${previousRole}`);
+            } catch (undoError) {
+              console.error("Failed to undo role change:", undoError);
+              toast.error("Failed to undo the role change");
+            }
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Failed to update role:", error);
+      toast.error(`Failed to update ${user.name}'s role. Please try again.`);
+    }
+  };
+
+  return (
+    <SingleSelect
+      data={roles}
+      labelKey={"label"}
+      valueKey={"value"}
+      colorKey={"color"}
+      value={currentRole}
+      onValueChange={handleRoleChange}
+    />
+  );
+}
+
+export const adminColumns = (currentUserId?: string): ColumnDef<User>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -132,7 +213,9 @@ export const adminColumns = (currentUserId?: string): ColumnDef<UserWithRole>[] 
       return (
         <span>
           {user.name}
-          {isCurrentUser && <span className="text-muted-foreground ml-1">(Me)</span>}
+          {isCurrentUser && (
+            <span className="text-muted-foreground ml-1">(Me)</span>
+          )}
         </span>
       );
     },
@@ -144,6 +227,18 @@ export const adminColumns = (currentUserId?: string): ColumnDef<UserWithRole>[] 
   {
     accessorKey: "role",
     header: "Role",
+    cell: ({ cell, row }) => {
+      const currentRole = cell.getValue() as string;
+      const user = row.original;
+
+      return (
+        <RoleCell
+          user={user}
+          currentRole={currentRole}
+          currentUserId={currentUserId}
+        />
+      );
+    },
   },
   {
     accessorKey: "appRole",
