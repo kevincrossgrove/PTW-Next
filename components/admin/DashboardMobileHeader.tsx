@@ -4,7 +4,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 
-export default function AdminMobileHeader() {
+export default function DashboardMobileHeader() {
   const { setOpenMobile } = useSidebar();
 
   return (

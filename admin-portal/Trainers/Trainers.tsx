@@ -1,7 +1,7 @@
 "use client";
 
-import AdminPageContainer from "@/components/admin/AdminPageContainer";
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import DashboardPageContainer from "@/components/admin/DashboardPageContainer";
+import DashboardPageHeader from "@/components/admin/DashboardPageHeader";
 import { AppTable } from "@/components/app/AppTable";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
@@ -24,26 +24,26 @@ export default function Trainers() {
 
   if (isLoading) {
     return (
-      <AdminPageContainer>
-        <AdminPageHeader title="Trainers" />
+      <DashboardPageContainer>
+        <DashboardPageHeader title="Trainers" />
         <div>Loading...</div>
-      </AdminPageContainer>
+      </DashboardPageContainer>
     );
   }
 
   if (error) {
     return (
-      <AdminPageContainer>
-        <AdminPageHeader title="Trainers" />
+      <DashboardPageContainer>
+        <DashboardPageHeader title="Trainers" />
         <div>Error loading trainers</div>
-      </AdminPageContainer>
+      </DashboardPageContainer>
     );
   }
 
   return (
-    <AdminPageContainer>
-      <AdminPageHeader title="Trainers" />
+    <DashboardPageContainer>
+      <DashboardPageHeader title="Trainers" />
       <AppTable columns={trainerColumns} data={data || []} />
-    </AdminPageContainer>
+    </DashboardPageContainer>
   );
 }

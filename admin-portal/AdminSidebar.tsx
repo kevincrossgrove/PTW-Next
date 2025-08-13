@@ -1,21 +1,27 @@
 import { AppSidebar } from "@/components/app/AppSidebar/AppSidebar";
-import AppSidebarPageItem from "./AppSidebarPageItem";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { SidebarGroup, SidebarGroupLabel } from "@/components/ui/sidebar";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
 import {
   ChartSpline,
   ChevronDown,
   Heart,
   Home,
+  LayoutDashboard,
   Mails,
   ShieldUser,
   Trophy,
   Users,
 } from "lucide-react";
+import Link from "next/link";
+import AppSidebarPageItem from "./AppSidebarPageItem";
 
 export default function AdminSidebar() {
   return (
@@ -63,6 +69,24 @@ export default function AdminSidebar() {
               title="Players"
               to="/admin/players"
             />
+          </CollapsibleContent>
+        </SidebarGroup>
+      </Collapsible>
+      <Collapsible defaultOpen className="group/collapsible">
+        <SidebarGroup>
+          <SidebarGroupLabel asChild>
+            <CollapsibleTrigger>
+              Links
+              <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+            </CollapsibleTrigger>
+          </SidebarGroupLabel>
+          <CollapsibleContent>
+            <SidebarMenuButton asChild title={"Trainer Dashboard"}>
+              <Link href={"/trainer"} className="flex items-center gap-2">
+                <LayoutDashboard />
+                <span>Trainer Dashboard</span>
+              </Link>
+            </SidebarMenuButton>
           </CollapsibleContent>
         </SidebarGroup>
       </Collapsible>

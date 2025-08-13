@@ -1,10 +1,10 @@
-import AdminPageContainer from "@/components/admin/AdminPageContainer";
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import DashboardPageContainer from "@/components/admin/DashboardPageContainer";
+import DashboardPageHeader from "@/components/admin/DashboardPageHeader";
 
 export default function AdminHome() {
   return (
-    <AdminPageContainer>
-      <AdminPageHeader title="Admin Home" />
-    </AdminPageContainer>
+    <DashboardPageContainer>
+      <DashboardPageHeader title="Admin Home" />
+    </DashboardPageContainer>
   );
 }

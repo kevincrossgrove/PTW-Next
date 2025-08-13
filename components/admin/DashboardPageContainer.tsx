@@ -1,4 +1,4 @@
-export default function AdminPageContainer({
+export default function DashboardPageContainer({
   children,
 }: {
   children: React.ReactNode;

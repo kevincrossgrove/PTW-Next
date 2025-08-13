@@ -1,13 +1,13 @@
-import AdminPageContainer from "@/components/admin/AdminPageContainer";
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import DashboardPageContainer from "@/components/admin/DashboardPageContainer";
+import DashboardPageHeader from "@/components/admin/DashboardPageHeader";
 
 export default function Invites() {
   return (
-    <AdminPageContainer>
-      <AdminPageHeader
+    <DashboardPageContainer>
+      <DashboardPageHeader
         title="Invites"
         description="Manage invites sent out from the platform"
       />
-    </AdminPageContainer>
+    </DashboardPageContainer>
   );
 }

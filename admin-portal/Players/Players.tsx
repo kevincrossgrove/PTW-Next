@@ -1,7 +1,7 @@
 "use client";
 
-import AdminPageContainer from "@/components/admin/AdminPageContainer";
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import DashboardPageContainer from "@/components/admin/DashboardPageContainer";
+import DashboardPageHeader from "@/components/admin/DashboardPageHeader";
 import { AppTable } from "@/components/app/AppTable";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
@@ -24,26 +24,26 @@ export default function Players() {
 
   if (isLoading) {
     return (
-      <AdminPageContainer>
-        <AdminPageHeader title="Players" />
+      <DashboardPageContainer>
+        <DashboardPageHeader title="Players" />
         <div>Loading...</div>
-      </AdminPageContainer>
+      </DashboardPageContainer>
     );
   }
 
   if (error) {
     return (
-      <AdminPageContainer>
-        <AdminPageHeader title="Players" />
+      <DashboardPageContainer>
+        <DashboardPageHeader title="Players" />
         <div>Error loading players</div>
-      </AdminPageContainer>
+      </DashboardPageContainer>
     );
   }
 
   return (
-    <AdminPageContainer>
-      <AdminPageHeader title="Players" />
+    <DashboardPageContainer>
+      <DashboardPageHeader title="Players" />
       <AppTable columns={playerColumns} data={data || []} />
-    </AdminPageContainer>
+    </DashboardPageContainer>
   );
 }

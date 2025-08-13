@@ -1,6 +1,6 @@
 "use client";
 
-import AdminPageContainer from "@/components/admin/AdminPageContainer";
+import DashboardPageContainer from "@/components/admin/DashboardPageContainer";
 import { AppTable } from "@/components/app/AppTable";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
@@ -25,29 +25,26 @@ export default function AdminUsers() {
 
   if (isLoading) {
     return (
-      <AdminPageContainer>
+      <DashboardPageContainer>
         <AdminHeader />
         <div>Loading...</div>
-      </AdminPageContainer>
+      </DashboardPageContainer>
     );
   }
 
   if (error) {
     return (
-      <AdminPageContainer>
+      <DashboardPageContainer>
         <AdminHeader />
         <div>Error loading users</div>
-      </AdminPageContainer>
+      </DashboardPageContainer>
     );
   }
 
   return (
-    <AdminPageContainer>
+    <DashboardPageContainer>
       <AdminHeader />
-      <AppTable 
-        columns={adminColumns(session?.user?.id)} 
-        data={data || []} 
-      />
-    </AdminPageContainer>
+      <AppTable columns={adminColumns(session?.user?.id)} data={data || []} />
+    </DashboardPageContainer>
   );
 }

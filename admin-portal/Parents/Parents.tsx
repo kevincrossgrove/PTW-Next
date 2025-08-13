@@ -1,7 +1,7 @@
 "use client";
 
-import AdminPageContainer from "@/components/admin/AdminPageContainer";
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import DashboardPageContainer from "@/components/admin/DashboardPageContainer";
+import DashboardPageHeader from "@/components/admin/DashboardPageHeader";
 import { AppTable } from "@/components/app/AppTable";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
@@ -24,26 +24,26 @@ export default function Parents() {
 
   if (isLoading) {
     return (
-      <AdminPageContainer>
-        <AdminPageHeader title="Parents" />
+      <DashboardPageContainer>
+        <DashboardPageHeader title="Parents" />
         <div>Loading...</div>
-      </AdminPageContainer>
+      </DashboardPageContainer>
     );
   }
 
   if (error) {
     return (
-      <AdminPageContainer>
-        <AdminPageHeader title="Parents" />
+      <DashboardPageContainer>
+        <DashboardPageHeader title="Parents" />
         <div>Error loading parents</div>
-      </AdminPageContainer>
+      </DashboardPageContainer>
     );
   }
 
   return (
-    <AdminPageContainer>
-      <AdminPageHeader title="Parents" />
+    <DashboardPageContainer>
+      <DashboardPageHeader title="Parents" />
       <AppTable columns={parentColumns} data={data || []} />
-    </AdminPageContainer>
+    </DashboardPageContainer>
   );
 }

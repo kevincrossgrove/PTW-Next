@@ -1,6 +1,6 @@
 "use client";
 
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import DashboardPageHeader from "@/components/admin/DashboardPageHeader";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import InviteAdminModal from "./InviteAdminModal";
@@ -10,7 +10,7 @@ export default function AdminHeader() {
 
   return (
     <>
-      <AdminPageHeader
+      <DashboardPageHeader
         title="Admins"
         actions={
           <Button onClick={() => setInviteAdminOpen(true)}>Invite Admin</Button>
