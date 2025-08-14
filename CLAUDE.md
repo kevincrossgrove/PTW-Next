@@ -52,7 +52,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 #### Component Organization
 - `components/ui/` - shadcn/ui base components
-- `components/app/` - App-specific reusable components (AppSelect, AppLoader, etc.)
+- `components/app/` - App-specific reusable components (AppSelect, AppLoader, AppDrawer, etc.)
 - `components/admin/` - Admin portal specific components
 - `components/auth/` - Authentication related components
 
@@ -75,3 +75,5 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Custom utilities in `lib/utils.ts` using clsx and tailwind-merge
 - **Zod Validation**: Always use `schema.parse()` wrapped in try-catch blocks instead of `safeParse()` for consistent error handling
 - **Data Fetching**: Always use `useQuery` from @tanstack/react-query for data fetching, never use `useEffect` for this purpose
+- **Drawers**: Use `@components/app/AppDrawer.tsx` when a drawer is requested
+- **Function Placement**: Place handler functions below the JSX return statement, using function declarations instead of arrow functions

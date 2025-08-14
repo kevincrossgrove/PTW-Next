@@ -1,9 +1,12 @@
 "use client";
 
 import { AppTable } from "@/components/app/AppTable";
+import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
 import DashboardPageContainer from "../../components/admin/DashboardPageContainer";
 import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
+import CreateContactDrawer from "./CreateContactDrawer";
 
 interface TrainerContact {
   id: string;
@@ -91,14 +94,27 @@ const mockData: TrainerContact[] = [
 ];
 
 export default function TrainerContacts() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   return (
     <DashboardPageContainer>
       <DashboardPageHeader
         title="My Contacts"
-        description="All parents and players you’re connected with — track details, follow up, and invite them to join your training app."
+        description="All parents and players you're connected with — track details, follow up, and invite them to join your training app."
+        actions={<Button onClick={handleCreateContact}>Create Contact</Button>}
       />
 
       <AppTable columns={columns} data={mockData} />
+
+      <CreateContactDrawer open={isDrawerOpen} onClose={handleCloseDrawer} />
     </DashboardPageContainer>
   );
+
+  function handleCreateContact() {
+    setIsDrawerOpen(true);
+  }
+
+  function handleCloseDrawer() {
+    setIsDrawerOpen(false);
+  }
 }
