@@ -1,5 +1,10 @@
-import React from "react";
+import DashboardPageContainer from "../../components/admin/DashboardPageContainer";
+import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
 
 export default function TrainerHome() {
-  return <div>TrainerHome</div>;
+  return (
+    <DashboardPageContainer>
+      <DashboardPageHeader title="Admin Home" />
+    </DashboardPageContainer>
+  );
 }

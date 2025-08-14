@@ -1,8 +1,10 @@
 "use client";
 
 import { AppTable } from "@/components/app/AppTable";
+import AppDrawer from "@/components/app/AppDrawer";
 import { Button } from "@/components/ui/button";
-import { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useState } from "react";
 import DashboardPageContainer from "../../components/admin/DashboardPageContainer";
 import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
@@ -12,39 +14,87 @@ import { ContactRecord } from "@/app/api/trainer/Types";
 
 type TrainerContact = ContactRecord & { id: string };
 
-const columns: ColumnDef<TrainerContact>[] = [
-  {
-    id: "name",
-    header: "Name",
-    cell: ({ row }) => `${row.original.FirstName} ${row.original.LastName}`,
-  },
-  {
-    accessorKey: "Email",
-    header: "Email",
-  },
-  {
-    accessorKey: "PhoneNumber",
-    header: "Phone",
-    cell: ({ row }) => row.getValue("PhoneNumber") || "-",
-  },
-  {
-    accessorKey: "Role",
-    header: "Role",
-  },
-  {
-    accessorKey: "CreatedAt",
-    header: "Added",
-    cell: ({ row }) => {
-      const date = row.getValue("CreatedAt") as string;
-      return new Date(date).toLocaleDateString();
-    },
-  },
-];
-
-
 export default function TrainerContacts() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [viewContactId, setViewContactId] = useState<string | null>(null);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const { data: contactsData, isLoading, error, refetch } = useFetchContacts();
+
+  function handleViewContact(contactId: string) {
+    setViewContactId(contactId);
+  }
+
+  const columns: ColumnDef<TrainerContact>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      id: "name",
+      header: "Name",
+      cell: ({ row }) => (
+        <button
+          onClick={() => handleViewContact(row.original.id)}
+          className="text-left font-bold hover:underline cursor-pointer text-foreground/80"
+        >
+          {`${row.original.FirstName} ${row.original.LastName}`}
+        </button>
+      ),
+    },
+    {
+      accessorKey: "Email",
+      header: "Email",
+    },
+    {
+      accessorKey: "PhoneNumber",
+      header: "Phone",
+      cell: ({ row }) => row.getValue("PhoneNumber") || "-",
+    },
+    {
+      accessorKey: "Role",
+      header: "Role",
+    },
+    {
+      accessorKey: "CreatedAt",
+      header: "Added",
+      cell: ({ row }) => {
+        const date = row.getValue("CreatedAt") as string;
+        return new Date(date).toLocaleDateString();
+      },
+    },
+  ];
+
+  function handleCreateContact() {
+    setIsDrawerOpen(true);
+  }
+
+  function handleCloseDrawer() {
+    setIsDrawerOpen(false);
+    // Refetch contacts when drawer closes (in case a contact was created)
+    refetch();
+  }
+
+  function handleCloseViewDrawer() {
+    setViewContactId(null);
+  }
 
   return (
     <DashboardPageContainer>
@@ -59,19 +109,23 @@ export default function TrainerContacts() {
         data={contactsData?.contacts || []} 
         isLoading={isLoading}
         error={error?.message}
+        enableRowSelection={true}
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
       />
 
       <CreateContactDrawer open={isDrawerOpen} onClose={handleCloseDrawer} />
+      
+      <AppDrawer
+        open={viewContactId !== null}
+        onClose={handleCloseViewDrawer}
+        headerTitle="Contact Details"
+        body={
+          <div>
+            Contact details for ID: {viewContactId}
+          </div>
+        }
+      />
     </DashboardPageContainer>
   );
-
-  function handleCreateContact() {
-    setIsDrawerOpen(true);
-  }
-
-  function handleCloseDrawer() {
-    setIsDrawerOpen(false);
-    // Refetch contacts when drawer closes (in case a contact was created)
-    refetch();
-  }
 }

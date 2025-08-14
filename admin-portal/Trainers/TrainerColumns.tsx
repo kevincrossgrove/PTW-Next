@@ -2,9 +2,9 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { UserWithRole } from "better-auth/plugins";
+import { User } from "better-auth";
 
-export const trainerColumns: ColumnDef<UserWithRole>[] = [
+export const trainerColumns: ColumnDef<User>[] = [
   {
     id: "select",
     header: ({ table }) => (
