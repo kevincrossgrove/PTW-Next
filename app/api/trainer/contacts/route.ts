@@ -1,8 +1,9 @@
 import { auth } from "@/lib/auth";
 import { createDocument } from "@/lib/db-helpers";
+import { connectToDatabase } from "@/lib/connect-to-db";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { CreateContactResponse } from "../Types";
+import { CreateContactResponse, FetchContactsResponse } from "../Types";
 
 const createContactSchema = z.object({
   role: z.enum(["Parent", "Player", "Coach"]),
@@ -19,6 +20,59 @@ const createContactSchema = z.object({
 });
 
 type CreateContactData = z.infer<typeof createContactSchema>;
+
+export async function GET(request: NextRequest) {
+  try {
+    // Get session to verify user is authenticated
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
+
+    if (!session?.user) {
+      return NextResponse.json(null, {
+        status: 401,
+        statusText: "Unauthorized",
+      });
+    }
+
+    // Connect to database and fetch contacts for this trainer
+    const { db } = await connectToDatabase();
+
+    const contacts = await db
+      .collection("Contacts")
+      .find({ TrainerID: session.user.id })
+      .sort({ CreatedAt: -1 })
+      .toArray();
+
+    // Transform contacts to include id field
+    const transformedContacts = contacts.map((contact) => ({
+      id: contact._id.toString(),
+      Role: contact.Role,
+      FirstName: contact.FirstName,
+      LastName: contact.LastName,
+      Email: contact.Email,
+      PhoneNumber: contact.PhoneNumber,
+      TrainerID: contact.TrainerID,
+      CreatedAt: contact.CreatedAt,
+      UpdatedAt: contact.UpdatedAt,
+      CreatedBy: contact.CreatedBy,
+      UpdatedBy: contact.UpdatedBy,
+    }));
+
+    const response: FetchContactsResponse = {
+      contacts: transformedContacts,
+    };
+
+    return NextResponse.json(response);
+  } catch (error) {
+    console.error("Error fetching contacts:", error);
+
+    return NextResponse.json(null, {
+      status: 500,
+      statusText: "Server error. Please try again.",
+    });
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {

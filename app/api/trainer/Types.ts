@@ -12,3 +12,7 @@ export interface ContactRecord extends DefaultFields {
 export interface CreateContactResponse {
   contact: ContactRecord & { id: string };
 }
+
+export interface FetchContactsResponse {
+  contacts: (ContactRecord & { id: string })[];
+}

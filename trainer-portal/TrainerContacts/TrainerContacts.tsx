@@ -7,94 +7,44 @@ import { useState } from "react";
 import DashboardPageContainer from "../../components/admin/DashboardPageContainer";
 import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
 import CreateContactDrawer from "./CreateContactDrawer";
+import useFetchContacts from "./useFetchContacts";
+import { ContactRecord } from "@/app/api/trainer/Types";
 
-interface TrainerContact {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  role: string;
-  status: "active" | "inactive";
-  lastContact?: Date;
-}
+type TrainerContact = ContactRecord & { id: string };
 
 const columns: ColumnDef<TrainerContact>[] = [
   {
-    accessorKey: "name",
+    id: "name",
     header: "Name",
+    cell: ({ row }) => `${row.original.FirstName} ${row.original.LastName}`,
   },
   {
-    accessorKey: "email",
+    accessorKey: "Email",
     header: "Email",
   },
   {
-    accessorKey: "phone",
+    accessorKey: "PhoneNumber",
     header: "Phone",
-    cell: ({ row }) => row.getValue("phone") || "-",
+    cell: ({ row }) => row.getValue("PhoneNumber") || "-",
   },
   {
-    accessorKey: "role",
+    accessorKey: "Role",
     header: "Role",
   },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "CreatedAt",
+    header: "Added",
     cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-      return (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${
-            status === "active"
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
-        >
-          {status}
-        </span>
-      );
-    },
-  },
-  {
-    accessorKey: "lastContact",
-    header: "Last Contact",
-    cell: ({ row }) => {
-      const date = row.getValue("lastContact") as Date;
-      return date ? date.toLocaleDateString() : "-";
+      const date = row.getValue("CreatedAt") as string;
+      return new Date(date).toLocaleDateString();
     },
   },
 ];
 
-const mockData: TrainerContact[] = [
-  {
-    id: "1",
-    name: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
-    phone: "(555) 123-4567",
-    role: "Head Trainer",
-    status: "active",
-    lastContact: new Date("2025-01-10"),
-  },
-  {
-    id: "2",
-    name: "Mike Chen",
-    email: "mike.chen@email.com",
-    phone: "(555) 234-5678",
-    role: "Assistant Trainer",
-    status: "active",
-    lastContact: new Date("2025-01-08"),
-  },
-  {
-    id: "3",
-    name: "Emily Rodriguez",
-    email: "emily.rodriguez@email.com",
-    role: "Specialist Trainer",
-    status: "inactive",
-    lastContact: new Date("2024-12-15"),
-  },
-];
 
 export default function TrainerContacts() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { data: contactsData, isLoading, error, refetch } = useFetchContacts();
 
   return (
     <DashboardPageContainer>
@@ -104,7 +54,12 @@ export default function TrainerContacts() {
         actions={<Button onClick={handleCreateContact}>Create Contact</Button>}
       />
 
-      <AppTable columns={columns} data={mockData} />
+      <AppTable 
+        columns={columns} 
+        data={contactsData?.contacts || []} 
+        isLoading={isLoading}
+        error={error?.message}
+      />
 
       <CreateContactDrawer open={isDrawerOpen} onClose={handleCloseDrawer} />
     </DashboardPageContainer>
@@ -116,5 +71,7 @@ export default function TrainerContacts() {
 
   function handleCloseDrawer() {
     setIsDrawerOpen(false);
+    // Refetch contacts when drawer closes (in case a contact was created)
+    refetch();
   }
 }

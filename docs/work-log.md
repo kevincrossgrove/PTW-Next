@@ -9,7 +9,7 @@
 - [x] Ability for trainers ONLY to access the trainer dashboard
 - [x] Ability to Navigate to Trainer Dashboard from Admin Home
 - [x] My Contacts Link in Sidebar - This will store all people who are potential clients, were previously trained, or are currently training.
-- [ ] Ability to create a contact
-- [ ] Display contacts
+- [x] Ability to create a contact
+- [x] Display contacts
 - [ ] Ability to view a contact
 - [ ] Ability to edit a contact
