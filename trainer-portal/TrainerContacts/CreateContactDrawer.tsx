@@ -15,9 +15,12 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import useCreateContact from "./useCreateContact";
 
 const contactSchema = z.object({
-  role: z.enum(["parent", "player", "coach"], {
+  role: z.enum(["Parent", "Player", "Coach"], {
     required_error: "Please select a role",
   }),
   firstName: z.string().min(1, "First name is required"),
@@ -42,6 +45,10 @@ export default function CreateContactDrawer({
   open,
   onClose,
 }: CreateContactDrawerProps) {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  
+  const createContact = useCreateContact();
+  
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     mode: "onSubmit",
@@ -58,6 +65,11 @@ export default function CreateContactDrawer({
   const formBody = (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {errorMessage && (
+          <Alert variant="destructive">
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
         <FormField
           control={form.control}
           name="role"
@@ -66,13 +78,13 @@ export default function CreateContactDrawer({
               <FormLabel>Role</FormLabel>
               <FormControl>
                 <div className="flex flex-wrap gap-3">
-                  {["parent", "player", "coach"].map((role) => (
+                  {["Parent", "Player", "Coach"].map((role) => (
                     <Badge
                       key={role}
                       variant={field.value === role ? "default" : "outline"}
-                      className="cursor-pointer capitalize px-4 py-2 text-sm font-medium hover:opacity-80 transition-opacity"
+                      className="cursor-pointer px-4 py-2 text-sm font-medium hover:opacity-80 transition-opacity"
                       onClick={() =>
-                        selectRole(role as "parent" | "player" | "coach")
+                        selectRole(role as "Parent" | "Player" | "Coach")
                       }
                     >
                       {role}
@@ -152,10 +164,12 @@ export default function CreateContactDrawer({
         />
 
         <div className="flex justify-end gap-3 pt-4">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={onClose} disabled={createContact.isPending}>
             Cancel
           </Button>
-          <Button type="submit">Create Contact</Button>
+          <Button type="submit" disabled={createContact.isPending}>
+            {createContact.isPending ? "Creating..." : "Create Contact"}
+          </Button>
         </div>
       </form>
     </Form>
@@ -172,18 +186,22 @@ export default function CreateContactDrawer({
     />
   );
 
-  function selectRole(role: "parent" | "player" | "coach") {
+  function selectRole(role: "Parent" | "Player" | "Coach") {
     form.setValue("role", role);
   }
 
   function onSubmit(data: ContactFormData) {
-    try {
-      console.log("Form data:", data);
-      // TODO: Add API call to create contact
-      onClose();
-      form.reset();
-    } catch (error) {
-      console.error("Error creating contact:", error);
-    }
+    setErrorMessage(null);
+    
+    createContact.mutate(data, {
+      onSuccess: () => {
+        onClose();
+        form.reset();
+        setErrorMessage(null);
+      },
+      onError: (error) => {
+        setErrorMessage(error.message || "Failed to create contact");
+      },
+    });
   }
 }

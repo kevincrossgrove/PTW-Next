@@ -5,12 +5,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ### Development
+
 - `npm run dev` - Start development server with Turbopack
 - `npm run build` - Build the application
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint
 
 ### Database Setup
+
 - Install Docker Desktop
 - Run: `docker run -d --name mongo-ptw -p 27018:27018 mongo:latest mongod --port 27018`
 - Note: Uses port 27018 instead of default 27017
@@ -18,6 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Architecture
 
 ### Tech Stack
+
 - **Framework**: Next.js 15 with App Router
 - **Database**: MongoDB with better-auth adapter
 - **Authentication**: better-auth with email/password and Google OAuth
@@ -29,12 +32,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Project Structure
 
 #### Core Directories
+
 - `app/` - Next.js App Router pages and API routes
 - `components/` - Reusable UI components organized by domain
 - `lib/` - Utilities, database connection, auth configuration
 - `trainer-portal/` - Separate React Router app for trainer functionality
 
 #### Authentication & Authorization
+
 - Uses better-auth with MongoDB adapter (`lib/auth.ts`)
 - User roles: `player`, `parent`, `trainer`, `admin`
 - Additional `appRole` field for app-specific permissions
@@ -42,26 +47,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Admin layout checks for admin role, trainer portal has separate routing
 
 #### Portal Architecture
+
 1. **Main App** (Next.js App Router):
    - Public pages, auth, dashboard, admin portal
    - Admin portal at `/admin/*` with role-based access
-   
 2. **Trainer Portal** (React Router SPA):
-   - Separate routing system at `/trainer/*`  
+   - Separate routing system at `/trainer/*`
    - Embedded as client component in `app/(trainer-portal)/trainer/[[...app]]/page.tsx`
 
 #### Component Organization
+
 - `components/ui/` - shadcn/ui base components
 - `components/app/` - App-specific reusable components (AppSelect, AppLoader, AppDrawer, etc.)
 - `components/admin/` - Admin portal specific components
 - `components/auth/` - Authentication related components
 
 #### API Structure
+
 - `app/api/admin/` - Admin management endpoints
 - `app/api/auth/[...all]/` - better-auth API routes
 - `app/api/constants.ts` - API constants
 
 ### Key Features
+
 - Multi-role user system with invite-based admin/trainer onboarding
 - Responsive design with mobile-first approach
 - Theme support via next-themes
@@ -69,6 +77,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Custom AppSelect component for form inputs
 
 ### Development Notes
+
 - Uses Turbopack for faster development builds
 - TypeScript throughout with strict configuration
 - ESLint configured for Next.js
@@ -77,3 +86,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Data Fetching**: Always use `useQuery` from @tanstack/react-query for data fetching, never use `useEffect` for this purpose
 - **Drawers**: Use `@components/app/AppDrawer.tsx` when a drawer is requested
 - **Function Placement**: Place handler functions below the JSX return statement, using function declarations instead of arrow functions
+- **API Error Handling**: Always use `statusText` to pass error messages from API routes to clients. Return `NextResponse.json(null, { status: statusCode, statusText: "Error message" })` for errors. Client-side hooks should read errors from `response.statusText`
+- **Typed API Responses**: Each route should define a TypeScript interface for its successful response JSON in a `Types.ts` file (e.g., `app/api/trainer/Types.ts`). Always use a nested object structure `{ data: ... }` for responses to allow future extensibility. Frontend hooks should import and use these types for full type safety
+
+### MongoDB Naming Conventions
+- **Collection Names**: Should be Capital and Plural (e.g., `Users`, `Contacts`, `TrainingPlans`)
+- **Exception**: better-auth generated collections use their default naming
+- **Field Names**: Should be Capital (e.g., `FirstName`, `LastName`, `Email`)
+- **Exception**: better-auth generated collections use their default field naming

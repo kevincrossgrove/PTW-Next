@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import Providers from "./providers";
+import Providers from "@/lib/providers";
 
 export default async function Layout({
   children,

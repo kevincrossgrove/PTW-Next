@@ -4,10 +4,11 @@ import NotFoundPage from "@/trainer-portal/NotFoundPage";
 import TrainerContacts from "./TrainerContacts/TrainerContacts";
 import TrainerHome from "./TrainerHome/TrainerHome";
 import TrainerLayout from "./TrainerLayout";
+import Providers from "@/lib/providers";
 
 export default function App() {
   return (
-    <>
+    <Providers>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<TrainerLayout />}>
@@ -18,6 +19,6 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </>
+    </Providers>
   );
 }
