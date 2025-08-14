@@ -4,7 +4,10 @@ import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
 export default function TrainerHome() {
   return (
     <DashboardPageContainer>
-      <DashboardPageHeader title="Admin Home" />
+      <DashboardPageHeader
+        title="Trainer Home"
+        description="Sage me boy 👋 How're you doing today?"
+      />
     </DashboardPageContainer>
   );
 }
