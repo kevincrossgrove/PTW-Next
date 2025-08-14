@@ -11,6 +11,7 @@ import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
 import CreateContactDrawer from "./CreateContactDrawer";
 import useFetchContacts from "./useFetchContacts";
 import { ContactRecord } from "@/app/api/trainer/Types";
+import { Plus } from "lucide-react";
 
 type TrainerContact = ContactRecord & { id: string };
 
@@ -101,18 +102,29 @@ export default function TrainerContacts() {
       <DashboardPageHeader
         title="My Contacts"
         description="All parents and players you're connected with — track details, follow up, and invite them to join your training app."
-        actions={<Button onClick={handleCreateContact}>Create Contact</Button>}
+        actions={<Button onClick={handleCreateContact} className="hidden sm:block">Create Contact</Button>}
       />
 
-      <AppTable 
-        columns={columns} 
-        data={contactsData?.contacts || []} 
-        isLoading={isLoading}
-        error={error?.message}
-        enableRowSelection={true}
-        rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
-      />
+      <div className="pb-20 sm:pb-0">
+        <AppTable 
+          columns={columns} 
+          data={contactsData?.contacts || []} 
+          isLoading={isLoading}
+          error={error?.message}
+          enableRowSelection={true}
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
+        />
+      </div>
+
+      {/* Mobile Floating Action Button */}
+      <button
+        onClick={handleCreateContact}
+        className="fixed bottom-6 right-6 sm:hidden w-14 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center z-50"
+        aria-label="Create Contact"
+      >
+        <Plus size={24} />
+      </button>
 
       <CreateContactDrawer open={isDrawerOpen} onClose={handleCloseDrawer} />
       
