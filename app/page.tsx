@@ -37,6 +37,11 @@ export default async function Home() {
               </>
             )}
           </div>
+          <div className="flex gap-4 mt-4">
+            <Link href="/releases">
+              <Button variant="outline">Release Notes</Button>
+            </Link>
+          </div>
         </main>
         <footer className=""></footer>
       </div>
