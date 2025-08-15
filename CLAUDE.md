@@ -88,6 +88,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Function Placement**: Place handler functions below the JSX return statement, using function declarations instead of arrow functions
 - **API Error Handling**: Always use `statusText` to pass error messages from API routes to clients. Return `NextResponse.json(null, { status: statusCode, statusText: "Error message" })` for errors. Client-side hooks should read errors from `response.statusText`
 - **Typed API Responses**: Each route should define a TypeScript interface for its successful response JSON in a `Types.ts` file (e.g., `app/api/trainer/Types.ts`). Always use a nested object structure `{ data: ... }` for responses to allow future extensibility. Frontend hooks should import and use these types for full type safety
+- **TypeScript Types**: Never use `any` type unless absolutely necessary. Always provide proper type definitions with explicit interfaces or type unions. Use optional properties (`property?`) and union types instead of `any`
 
 ### MongoDB Naming Conventions
 - **Collection Names**: Should be Capital and Plural (e.g., `Users`, `Contacts`, `TrainingPlans`)

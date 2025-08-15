@@ -16,3 +16,7 @@ export interface CreateContactResponse {
 export interface FetchContactsResponse {
   contacts: (ContactRecord & { id: string })[];
 }
+
+export interface FetchContactResponse {
+  contact: ContactRecord & { id: string };
+}

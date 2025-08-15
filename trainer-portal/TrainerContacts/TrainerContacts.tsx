@@ -1,28 +1,28 @@
 "use client";
 
+import { ContactRecord } from "@/app/api/trainer/Types";
 import { AppTable } from "@/components/app/AppTable";
-import AppDrawer from "@/components/app/AppDrawer";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import DashboardPageContainer from "../../components/admin/DashboardPageContainer";
 import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
+import ContactDetailsDrawer from "./ContactDetailsDrawer";
 import CreateContactDrawer from "./CreateContactDrawer";
 import useFetchContacts from "./useFetchContacts";
-import { ContactRecord } from "@/app/api/trainer/Types";
-import { Plus } from "lucide-react";
 
 type TrainerContact = ContactRecord & { id: string };
 
 export default function TrainerContacts() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [viewContactId, setViewContactId] = useState<string | null>(null);
+  const [viewContactID, setViewContactID] = useState<string | null>(null);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const { data: contactsData, isLoading, error, refetch } = useFetchContacts();
 
   function handleViewContact(contactId: string) {
-    setViewContactId(contactId);
+    setViewContactID(contactId);
   }
 
   const columns: ColumnDef<TrainerContact>[] = [
@@ -94,7 +94,7 @@ export default function TrainerContacts() {
   }
 
   function handleCloseViewDrawer() {
-    setViewContactId(null);
+    setViewContactID(null);
   }
 
   return (
@@ -102,13 +102,17 @@ export default function TrainerContacts() {
       <DashboardPageHeader
         title="My Contacts"
         description="All parents and players you're connected with — track details, follow up, and invite them to join your training app."
-        actions={<Button onClick={handleCreateContact} className="hidden sm:block">Create Contact</Button>}
+        actions={
+          <Button onClick={handleCreateContact} className="hidden sm:block">
+            Create Contact
+          </Button>
+        }
       />
 
       <div className="pb-20 sm:pb-0">
-        <AppTable 
-          columns={columns} 
-          data={contactsData?.contacts || []} 
+        <AppTable
+          columns={columns}
+          data={contactsData?.contacts || []}
           isLoading={isLoading}
           error={error?.message}
           enableRowSelection={true}
@@ -127,16 +131,11 @@ export default function TrainerContacts() {
       </button>
 
       <CreateContactDrawer open={isDrawerOpen} onClose={handleCloseDrawer} />
-      
-      <AppDrawer
-        open={viewContactId !== null}
+
+      <ContactDetailsDrawer
+        open={viewContactID !== null}
         onClose={handleCloseViewDrawer}
-        headerTitle="Contact Details"
-        body={
-          <div>
-            Contact details for ID: {viewContactId}
-          </div>
-        }
+        contactId={viewContactID}
       />
     </DashboardPageContainer>
   );
