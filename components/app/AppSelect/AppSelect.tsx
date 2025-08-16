@@ -2,7 +2,6 @@
 
 import { Check } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -16,7 +15,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Props<T> {
   placeholder?: string;
@@ -53,6 +54,7 @@ export function AppSelect<T>({
 }: Props<T & { [key: string]: string }>) {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState("");
+  const isMobile = useIsMobile();
 
   const value = controlledValue !== undefined ? controlledValue : internalValue;
   const setValue = onValueChange || setInternalValue;
@@ -88,6 +90,7 @@ export function AppSelect<T>({
             <CommandInput
               placeholder={searchPlaceholder || placeholder}
               className="h-9"
+              autoFocus={!isMobile}
             />
           )}
           <CommandList>

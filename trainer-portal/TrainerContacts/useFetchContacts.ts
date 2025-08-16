@@ -5,7 +5,7 @@ import { FetchContactsResponse } from "@/app/api/trainer/Types";
 import { authClient } from "@/lib/auth-client";
 
 export default function useFetchContacts() {
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending: sessionLoading } = authClient.useSession();
   
   const fetchContacts = useQuery<FetchContactsResponse, Error>({
     queryKey: ["trainer-contacts", session?.user?.id],
@@ -26,5 +26,8 @@ export default function useFetchContacts() {
     enabled: !!session?.user?.id, // Only run query when user ID is available
   });
 
-  return fetchContacts;
+  return {
+    ...fetchContacts,
+    isLoading: fetchContacts.isLoading || sessionLoading, // Include session loading state
+  };
 }
