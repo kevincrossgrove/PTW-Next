@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { ContactRecordWithTrainer } from "@/app/api/admin/Types";
 
-export const columns: ColumnDef<ContactRecordWithTrainer>[] = [
+export const createColumns = (onViewContact: (contactId: string) => void): ColumnDef<ContactRecordWithTrainer>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -28,12 +28,16 @@ export const columns: ColumnDef<ContactRecordWithTrainer>[] = [
     ),
   },
   {
-    accessorKey: "FirstName",
-    header: "First Name",
-  },
-  {
-    accessorKey: "LastName",
-    header: "Last Name",
+    id: "name",
+    header: "Name",
+    cell: ({ row }) => (
+      <button
+        onClick={() => onViewContact(row.original.id)}
+        className="text-left font-bold hover:underline cursor-pointer text-foreground/80"
+      >
+        {`${row.original.FirstName} ${row.original.LastName}`}
+      </button>
+    ),
   },
   {
     accessorKey: "Email",

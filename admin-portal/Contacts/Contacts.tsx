@@ -5,8 +5,9 @@ import DashboardPageHeader from "@/components/admin/DashboardPageHeader";
 import { AppTable } from "@/components/app/AppTable";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { columns } from "./ContactsColumns";
-import { FetchAllContactsResponse } from "@/app/api/admin/Types";
+import { createColumns } from "./ContactsColumns";
+import { FetchAllContactsResponse, ContactRecordWithTrainer } from "@/app/api/admin/Types";
+import ContactDetailsDrawer from "../../trainer-portal/TrainerContacts/ContactDetailsDrawer";
 
 export default function Contacts() {
   const { data, isLoading, error } = useQuery({
@@ -24,6 +25,18 @@ export default function Contacts() {
   });
 
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+  const [selectedContact, setSelectedContact] = useState<ContactRecordWithTrainer | null>(null);
+
+  function handleViewContact(contactId: string) {
+    const contact = data?.find(c => c.id === contactId);
+    setSelectedContact(contact || null);
+  }
+
+  function handleCloseDrawer() {
+    setSelectedContact(null);
+  }
+
+  const columns = createColumns(handleViewContact);
 
   if (isLoading) {
     return (
@@ -61,6 +74,13 @@ export default function Contacts() {
         enableRowSelection={true}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
+      />
+      
+      <ContactDetailsDrawer
+        open={selectedContact !== null}
+        onClose={handleCloseDrawer}
+        contactId={null}
+        contactData={selectedContact}
       />
     </DashboardPageContainer>
   );

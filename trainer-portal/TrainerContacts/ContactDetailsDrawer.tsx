@@ -4,12 +4,14 @@ import AppDrawer from "@/components/app/AppDrawer";
 import AppLoader from "@/components/app/AppLoader";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone } from "lucide-react";
+import { ContactRecordWithTrainer } from "@/app/api/admin/Types";
 import useContact from "./useContact";
 
 interface ContactDetailsDrawerProps {
   open: boolean;
   onClose: () => void;
   contactId: string | null;
+  contactData?: ContactRecordWithTrainer | null;
 }
 
 interface ContactFieldProps {
@@ -37,10 +39,12 @@ export default function ContactDetailsDrawer({
   open,
   onClose,
   contactId,
+  contactData,
 }: ContactDetailsDrawerProps) {
-  const { data: contactData, isLoading, error } = useContact(contactId);
+  const { data: fetchedContactData, isLoading, error } = useContact(contactId);
 
-  const contact = contactData?.contact;
+  // Use provided contactData if available, otherwise use fetched data
+  const contact = contactData || fetchedContactData?.contact;
 
   return (
     <AppDrawer
@@ -69,9 +73,9 @@ export default function ContactDetailsDrawer({
         ) : null
       }
       body={
-        isLoading ? (
+        isLoading && !contactData ? (
           <AppLoader />
-        ) : error ? (
+        ) : error && !contactData ? (
           <div className="p-4 text-center text-red-600">
             <p>Error loading contact details</p>
             <p className="text-sm text-muted-foreground mt-1">{error.message}</p>
@@ -91,6 +95,21 @@ export default function ContactDetailsDrawer({
               />
 
               <ContactField label="Role" value={contact.Role} />
+
+              {/* Show trainer info if this is admin contact data */}
+              {"TrainerName" in contact && (
+                <>
+                  <ContactField 
+                    label="Trainer" 
+                    value={(contact as ContactRecordWithTrainer).TrainerName}
+                  />
+                  
+                  <ContactField 
+                    label="Trainer Email" 
+                    value={(contact as ContactRecordWithTrainer).TrainerEmail}
+                  />
+                </>
+              )}
 
               <ContactField
                 label="Added"
