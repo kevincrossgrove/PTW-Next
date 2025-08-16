@@ -2,11 +2,11 @@ import { auth } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/connect-to-db";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-import { FetchContactResponse } from "../../Types";
+import { FetchContactResponse, ContactRecord } from "../../Types";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get session to verify user is authenticated
@@ -21,8 +21,11 @@ export async function GET(
       });
     }
 
+    // Await params to get the id
+    const { id } = await params;
+
     // Validate ObjectId format
-    if (!ObjectId.isValid(params.id)) {
+    if (!ObjectId.isValid(id)) {
       return NextResponse.json(null, {
         status: 400,
         statusText: "Invalid contact ID format",
@@ -34,7 +37,7 @@ export async function GET(
 
     // Build query - admins can access any contact, others only their own
     const query: { _id: ObjectId; TrainerID?: string } = {
-      _id: new ObjectId(params.id),
+      _id: new ObjectId(id),
     };
 
     if (session.user.role !== "admin") {
@@ -51,7 +54,7 @@ export async function GET(
     }
 
     // Transform contact to include id field
-    const transformedContact = {
+    const transformedContact: ContactRecord & { id: string } = {
       id: contact._id.toString(),
       Role: contact.Role,
       FirstName: contact.FirstName,

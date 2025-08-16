@@ -193,7 +193,7 @@ export default function CreateContactDrawer({
         />
 
         <div className="flex justify-end gap-3 pt-4">
-          <Button type="button" variant="outline" onClick={onClose} disabled={createContact.isPending}>
+          <Button type="button" variant="outline" onClick={handleClose} disabled={createContact.isPending}>
             Cancel
           </Button>
           <Button type="submit" disabled={createContact.isPending}>
@@ -207,13 +207,19 @@ export default function CreateContactDrawer({
   return (
     <AppDrawer
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       headerTitle="Create Contact"
       headerDescription="Add a new contact to your list"
       body={formBody}
       size="lg"
     />
   );
+
+  function handleClose() {
+    form.reset();
+    setErrorMessage(null);
+    onClose();
+  }
 
   function selectRole(role: "Parent" | "Player" | "Coach") {
     form.setValue("role", role);
