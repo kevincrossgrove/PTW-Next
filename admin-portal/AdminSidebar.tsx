@@ -12,6 +12,7 @@ import {
 import {
   ChartSpline,
   ChevronDown,
+  Contact,
   Heart,
   Home,
   LayoutDashboard,
@@ -29,14 +30,9 @@ export default function AdminSidebar() {
       <SidebarGroup>
         <SidebarGroupLabel>PTW Admin</SidebarGroupLabel>
         <AppSidebarPageItem icon={<Home />} title="Home" to="/admin/home" />
-        <AppSidebarPageItem
-          icon={<Mails />}
-          title="Invites"
-          to="/admin/invites"
-        />
       </SidebarGroup>
       <Collapsible defaultOpen className="group/collapsible">
-        <SidebarGroup>
+        <SidebarGroup className="-mt-2">
           <SidebarGroupLabel asChild>
             <CollapsibleTrigger>
               User Management
@@ -55,25 +51,59 @@ export default function AdminSidebar() {
               to="/admin/admin-users"
             />
             <AppSidebarPageItem
-              icon={<ChartSpline />}
-              title="Trainers"
-              to="/admin/trainers"
+              icon={<Mails />}
+              title="Invites"
+              to="/admin/invites"
+            />
+          </CollapsibleContent>
+        </SidebarGroup>
+      </Collapsible>
+      <Collapsible defaultOpen className="group/collapsible">
+        <SidebarGroup className="-mt-2">
+          <SidebarGroupLabel asChild>
+            <CollapsibleTrigger>
+              Player Management
+              <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+            </CollapsibleTrigger>
+          </SidebarGroupLabel>
+          <CollapsibleContent>
+            <AppSidebarPageItem
+              icon={<Trophy />}
+              title="Players"
+              to="/admin/players"
             />
             <AppSidebarPageItem
               icon={<Heart />}
               title="Parents"
               to="/admin/parents"
             />
+          </CollapsibleContent>
+        </SidebarGroup>
+      </Collapsible>
+      <Collapsible defaultOpen className="group/collapsible">
+        <SidebarGroup className="-mt-2">
+          <SidebarGroupLabel asChild>
+            <CollapsibleTrigger>
+              Trainer Management
+              <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+            </CollapsibleTrigger>
+          </SidebarGroupLabel>
+          <CollapsibleContent>
             <AppSidebarPageItem
-              icon={<Trophy />}
-              title="Players"
-              to="/admin/players"
+              icon={<ChartSpline />}
+              title="Trainers"
+              to="/admin/trainers"
+            />
+            <AppSidebarPageItem
+              icon={<Contact />}
+              title="Contacts"
+              to="/admin/contacts"
             />
           </CollapsibleContent>
         </SidebarGroup>
       </Collapsible>
       <Collapsible defaultOpen className="group/collapsible">
-        <SidebarGroup>
+        <SidebarGroup className="-mt-2">
           <SidebarGroupLabel asChild>
             <CollapsibleTrigger>
               Links

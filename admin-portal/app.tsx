@@ -4,6 +4,7 @@ import NotFoundPage from "@/admin-portal/NotFoundPage";
 import AdminHome from "./AdminHome/AdminHome";
 import AdminLayout from "./AdminLayout";
 import AdminUsers from "./AdminUsers/AdminUsers";
+import Contacts from "./Contacts/Contacts";
 import Invites from "./Invites/Invites";
 import Parents from "./Parents/Parents";
 import Players from "./Players/Players";
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="admin" element={<AdminHome />} />
           <Route path="admin/home" element={<AdminHome />} />
           <Route path="admin/admin-users" element={<AdminUsers />} />
+          <Route path="admin/contacts" element={<Contacts />} />
           <Route path="admin/invites" element={<Invites />} />
           <Route path="admin/parents" element={<Parents />} />
           <Route path="admin/players" element={<Players />} />

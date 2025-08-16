@@ -18,7 +18,7 @@
 
 - [ ] Document every different role (in a single md file for now)
 - [x] Temporarily improve the landing page design
-- [ ] Ability to view all Contacts in the Admin Dashboard, regardless of who created them
+- [x] Ability to view all Contacts in the Admin Dashboard, regardless of who created them
 - [ ] Ability to edit a contact
 - [ ] Ability to delete contacts
 - [ ] Add notes to a contact

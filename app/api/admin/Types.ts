@@ -56,3 +56,25 @@ export const UpdateUserSchema = z
   .strict(); // strict() ensures no extra fields are allowed
 
 export type UpdateUserPayload = z.infer<typeof UpdateUserSchema>;
+
+export interface ContactRecordWithTrainer {
+  id: string;
+  Role: "Parent" | "Player" | "Coach";
+  FirstName: string;
+  LastName: string;
+  Email: string;
+  PhoneNumber: string;
+  TrainerID: string;
+  TrainerName: string;
+  TrainerEmail: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+  CreatedBy: string;
+  UpdatedBy: string;
+}
+
+export interface FetchAllContactsResponse {
+  data: {
+    contacts: ContactRecordWithTrainer[];
+  };
+}
