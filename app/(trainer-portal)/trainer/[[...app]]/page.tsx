@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { auth } from "../../../../lib/auth";
 import TrainerApp from "./TrainerApp";
 
@@ -8,7 +8,7 @@ export default async function Home() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
-    throw notFound();
+    redirect("/login?returnUrl=/trainer");
   }
 
   if (session.user?.appRole !== "trainer") {

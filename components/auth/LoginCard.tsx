@@ -29,6 +29,7 @@ export default function LoginCard() {
   const router = useRouter();
   const search = useSearchParams();
   const inviteID = search.get("inviteID");
+  const returnUrl = search.get("returnUrl");
 
   return (
     <Card className="w-full max-w-sm">
@@ -112,7 +113,7 @@ export default function LoginCard() {
           <CardDescription className="text-sm pt-1">
             New here?{" "}
             <Link
-              href={`/signup${inviteID ? `?inviteID=${inviteID}` : ""}`}
+              href={`/signup${inviteID ? `?inviteID=${inviteID}` : returnUrl ? `?returnUrl=${returnUrl}` : ""}`}
               className="text-foreground underline"
             >
               Create an account
@@ -126,10 +127,16 @@ export default function LoginCard() {
   async function googleLogin() {
     setLoadingGoogle(true);
 
+    const redirectUrl = inviteID 
+      ? `/invite/${inviteID}` 
+      : returnUrl 
+      ? returnUrl 
+      : "/";
+
     await authClient.signIn.social({
       provider: "google",
-      newUserCallbackURL: inviteID ? `/invite/${inviteID}` : "/dashboard",
-      callbackURL: inviteID ? `/invite/${inviteID}` : "/dashboard",
+      newUserCallbackURL: redirectUrl,
+      callbackURL: redirectUrl,
       errorCallbackURL: "/login",
     });
 
@@ -159,7 +166,13 @@ export default function LoginCard() {
       return;
     }
 
-    router.push(inviteID ? `/invite/${inviteID}` : "/dashboard");
+    const redirectUrl = inviteID 
+      ? `/invite/${inviteID}` 
+      : returnUrl 
+      ? returnUrl 
+      : "/";
+    
+    router.push(redirectUrl);
 
     setTimeout(() => setSubmitting(false), 500);
 

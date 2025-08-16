@@ -31,6 +31,7 @@ export default function SignupCard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inviteID = searchParams.get("inviteID");
+  const returnUrl = searchParams.get("returnUrl");
 
   return (
     <Card className="w-full max-w-sm">
@@ -141,7 +142,10 @@ export default function SignupCard() {
           </div>
           <CardDescription className="text-sm pt-1">
             Already have an account?{" "}
-            <Link href={"/login"} className="text-foreground underline">
+            <Link 
+              href={`/login${returnUrl ? `?returnUrl=${returnUrl}` : ""}`} 
+              className="text-foreground underline"
+            >
               Sign in
             </Link>
           </CardDescription>
@@ -153,10 +157,16 @@ export default function SignupCard() {
   async function googleLogin() {
     setLoadingGoogle(true);
 
+    const redirectUrl = inviteID 
+      ? `/invite/${inviteID}` 
+      : returnUrl 
+      ? returnUrl 
+      : "/";
+
     await authClient.signIn.social({
       provider: "google",
-      newUserCallbackURL: inviteID ? `/invite/${inviteID}` : "/dashboard",
-      callbackURL: inviteID ? `/invite/${inviteID}` : "/dashboard",
+      newUserCallbackURL: redirectUrl,
+      callbackURL: redirectUrl,
       errorCallbackURL: "/login",
     });
 
@@ -188,6 +198,13 @@ export default function SignupCard() {
 
     setTimeout(() => setSubmitting(false), 500);
     console.log(data);
-    router.push(inviteID ? `/invite/${inviteID}` : "/dashboard");
+    
+    const redirectUrl = inviteID 
+      ? `/invite/${inviteID}` 
+      : returnUrl 
+      ? returnUrl 
+      : "/";
+    
+    router.push(redirectUrl);
   }
 }
