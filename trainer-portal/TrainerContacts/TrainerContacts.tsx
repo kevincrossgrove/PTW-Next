@@ -2,15 +2,17 @@
 
 import { ContactRecord } from "@/app/api/trainer/Types";
 import { AppTable } from "@/components/app/AppTable";
+import { FloatingActionBar } from "@/components/app/FloatingActionBar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import { Plus } from "lucide-react";
+import { Plus, Trash2, Mail } from "lucide-react";
 import { useState } from "react";
 import DashboardPageContainer from "../../components/admin/DashboardPageContainer";
 import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
 import ContactDetailsDrawer from "./ContactDetailsDrawer";
 import CreateContactDrawer from "./CreateContactDrawer";
+import EmailContactsDrawer from "./EmailContactsDrawer";
 import useFetchContacts from "./useFetchContacts";
 
 type TrainerContact = ContactRecord & { id: string };
@@ -18,6 +20,7 @@ type TrainerContact = ContactRecord & { id: string };
 export default function TrainerContacts() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [viewContactID, setViewContactID] = useState<string | null>(null);
+  const [isEmailDrawerOpen, setIsEmailDrawerOpen] = useState(false);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const { data: contactsData, isLoading, error, refetch } = useFetchContacts();
 
@@ -99,6 +102,31 @@ export default function TrainerContacts() {
     setViewContactID(null);
   }
 
+  function handleCloseActionBar() {
+    setRowSelection({});
+  }
+
+  function handleDeleteSelected() {
+    const selectedIds = Object.keys(rowSelection);
+    console.log("Delete contacts:", selectedIds);
+    // TODO: Implement delete functionality
+    setRowSelection({});
+  }
+
+  function handleEmailSelected() {
+    setIsEmailDrawerOpen(true);
+  }
+
+  function handleCloseEmailDrawer() {
+    setIsEmailDrawerOpen(false);
+    setRowSelection({});
+  }
+
+  const selectedCount = Object.keys(rowSelection).length;
+  const selectedContacts = contactsData?.contacts.filter((contact, index) => 
+    rowSelection[index]
+  ) || [];
+
   return (
     <DashboardPageContainer>
       <DashboardPageHeader
@@ -138,6 +166,40 @@ export default function TrainerContacts() {
         open={viewContactID !== null}
         onClose={handleCloseViewDrawer}
         contactId={viewContactID}
+      />
+
+      <FloatingActionBar
+        isVisible={selectedCount > 0}
+        selectedCount={selectedCount}
+        onClose={handleCloseActionBar}
+        actions={
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleEmailSelected}
+              className="gap-2 bg-blue-500 hover:bg-blue-600 text-white border-none sm:px-3 px-2"
+            >
+              <Mail size={16} />
+              <span className="hidden sm:inline">Email</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDeleteSelected}
+              className="gap-2 bg-red-500 hover:bg-red-600 text-white border-none sm:px-3 px-2"
+            >
+              <Trash2 size={16} />
+              <span className="hidden sm:inline">Delete</span>
+            </Button>
+          </>
+        }
+      />
+
+      <EmailContactsDrawer
+        open={isEmailDrawerOpen}
+        onClose={handleCloseEmailDrawer}
+        contacts={selectedContacts}
       />
     </DashboardPageContainer>
   );
