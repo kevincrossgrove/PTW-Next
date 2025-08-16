@@ -11,7 +11,7 @@ export default function DashboardPageHeader({
 }: DashboardPageHeaderProps) {
   return (
     <div className="w-full pb-6">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div className="min-w-0 flex-1">
           <h1 className="text-lg sm:text-[22px] font-bold mb-1 break-words">
             {title}

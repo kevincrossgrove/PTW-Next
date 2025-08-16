@@ -20,5 +20,5 @@
 - [x] Temporarily improve the landing page design
 - [x] Ability to view all Contacts in the Admin Dashboard, regardless of who created them
 - [ ] Ability to edit a contact
-- [ ] Ability to delete contacts
+- [x] Ability to delete contacts
 - [ ] Add notes to a contact

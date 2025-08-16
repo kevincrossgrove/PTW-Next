@@ -6,13 +6,15 @@ import { FloatingActionBar } from "@/components/app/FloatingActionBar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import { Plus, Trash2, Mail } from "lucide-react";
+import { Mail, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import DashboardPageContainer from "../../components/admin/DashboardPageContainer";
 import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
 import ContactDetailsDrawer from "./ContactDetailsDrawer";
 import CreateContactDrawer from "./CreateContactDrawer";
+import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import EmailContactsDrawer from "./EmailContactsDrawer";
+import useDeleteContacts from "./useDeleteContacts";
 import useFetchContacts from "./useFetchContacts";
 
 type TrainerContact = ContactRecord & { id: string };
@@ -21,8 +23,19 @@ export default function TrainerContacts() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [viewContactID, setViewContactID] = useState<string | null>(null);
   const [isEmailDrawerOpen, setIsEmailDrawerOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const { data: contactsData, isLoading, error, refetch } = useFetchContacts();
+
+  const { deleteContacts, isDeleting } = useDeleteContacts({
+    onSuccess: () => {
+      setRowSelection({});
+      setIsDeleteDialogOpen(false);
+    },
+    onError: (error) => {
+      console.error("Failed to delete contacts:", error);
+    },
+  });
 
   function handleViewContact(contactId: string) {
     setViewContactID(contactId);
@@ -107,10 +120,23 @@ export default function TrainerContacts() {
   }
 
   function handleDeleteSelected() {
-    const selectedIds = Object.keys(rowSelection);
-    console.log("Delete contacts:", selectedIds);
-    // TODO: Implement delete functionality
-    setRowSelection({});
+    setIsDeleteDialogOpen(true);
+  }
+
+  function handleConfirmDelete() {
+    const selectedIndices = Object.keys(rowSelection);
+
+    const selectedContactIds = selectedIndices
+      .map((index) => contactsData?.contacts[parseInt(index)]?.id)
+      .filter((id): id is string => Boolean(id));
+
+    if (selectedContactIds.length > 0) {
+      deleteContacts(selectedContactIds);
+    }
+  }
+
+  function handleCloseDeleteDialog() {
+    setIsDeleteDialogOpen(false);
   }
 
   function handleEmailSelected() {
@@ -123,9 +149,8 @@ export default function TrainerContacts() {
   }
 
   const selectedCount = Object.keys(rowSelection).length;
-  const selectedContacts = contactsData?.contacts.filter((contact, index) => 
-    rowSelection[index]
-  ) || [];
+  const selectedContacts =
+    contactsData?.contacts.filter((_, index) => rowSelection[index]) || [];
 
   return (
     <DashboardPageContainer>
@@ -133,8 +158,12 @@ export default function TrainerContacts() {
         title="My Contacts"
         description="All parents and players you're connected with — track details, follow up, and invite them to join your training app."
         actions={
-          <Button onClick={handleCreateContact} className="hidden sm:block">
-            Create Contact
+          <Button
+            onClick={handleCreateContact}
+            size="icon"
+            className="hidden sm:flex w-10 h-10"
+          >
+            <Plus className="size-6" />
           </Button>
         }
       />
@@ -152,13 +181,13 @@ export default function TrainerContacts() {
       </div>
 
       {/* Mobile Floating Action Button */}
-      <button
+      <Button
         onClick={handleCreateContact}
-        className="fixed bottom-6 right-6 sm:hidden w-14 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center z-50"
+        className="fixed bottom-8 right-6 sm:hidden shadow-lg hover:shadow-xl transition-all duration-200 z-50 w-12 h-12"
         aria-label="Create Contact"
       >
-        <Plus size={24} />
-      </button>
+        <Plus className="size-7" />
+      </Button>
 
       <CreateContactDrawer open={isDrawerOpen} onClose={handleCloseDrawer} />
 
@@ -187,10 +216,13 @@ export default function TrainerContacts() {
               variant="ghost"
               size="sm"
               onClick={handleDeleteSelected}
+              disabled={isDeleting}
               className="gap-2 bg-red-500 hover:bg-red-600 text-white border-none sm:px-3 px-2"
             >
               <Trash2 size={16} />
-              <span className="hidden sm:inline">Delete</span>
+              <span className="hidden sm:inline">
+                {isDeleting ? "Deleting..." : "Delete"}
+              </span>
             </Button>
           </>
         }
@@ -200,6 +232,14 @@ export default function TrainerContacts() {
         open={isEmailDrawerOpen}
         onClose={handleCloseEmailDrawer}
         contacts={selectedContacts}
+      />
+
+      <DeleteConfirmationDialog
+        open={isDeleteDialogOpen}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleConfirmDelete}
+        contactCount={selectedCount}
+        isLoading={isDeleting}
       />
     </DashboardPageContainer>
   );

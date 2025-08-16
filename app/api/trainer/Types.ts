@@ -20,3 +20,12 @@ export interface FetchContactsResponse {
 export interface FetchContactResponse {
   contact: ContactRecord & { id: string };
 }
+
+export interface DeleteContactResponse {
+  success: boolean;
+}
+
+export interface BulkDeleteContactsResponse {
+  success: boolean;
+  deletedCount: number;
+}

@@ -82,3 +82,74 @@ export async function GET(
     });
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    // Get session to verify user is authenticated
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
+
+    if (!session?.user) {
+      return NextResponse.json(null, {
+        status: 401,
+        statusText: "Unauthorized",
+      });
+    }
+
+    // Await params to get the id
+    const { id } = await params;
+
+    // Validate ObjectId format
+    if (!ObjectId.isValid(id)) {
+      return NextResponse.json(null, {
+        status: 400,
+        statusText: "Invalid contact ID format",
+      });
+    }
+
+    // Connect to database
+    const { db } = await connectToDatabase();
+
+    // Build query - admins can delete any contact, others only their own
+    const query: { _id: ObjectId; TrainerID?: string } = {
+      _id: new ObjectId(id),
+    };
+
+    if (session.user.role !== "admin") {
+      query.TrainerID = session.user.id;
+    }
+
+    // First check if contact exists and user has permission
+    const existingContact = await db.collection("Contacts").findOne(query);
+
+    if (!existingContact) {
+      return NextResponse.json(null, {
+        status: 404,
+        statusText: "Contact not found or access denied",
+      });
+    }
+
+    // Delete the contact
+    const result = await db.collection("Contacts").deleteOne(query);
+
+    if (result.deletedCount === 0) {
+      return NextResponse.json(null, {
+        status: 404,
+        statusText: "Contact not found or access denied",
+      });
+    }
+
+    return NextResponse.json({ data: { success: true } });
+  } catch (error) {
+    console.error("Error deleting contact:", error);
+
+    return NextResponse.json(null, {
+      status: 500,
+      statusText: "Server error. Please try again.",
+    });
+  }
+}
