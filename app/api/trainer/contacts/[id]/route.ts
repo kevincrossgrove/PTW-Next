@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/connect-to-db";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-import { FetchContactResponse, ContactRecord } from "../../Types";
+import { ContactRecord, FetchContactResponse } from "../../Types";
 
 export async function GET(
   request: NextRequest,
@@ -62,6 +62,7 @@ export async function GET(
       Email: contact.Email,
       PhoneNumber: contact.PhoneNumber,
       TrainerID: contact.TrainerID,
+      Notes: contact.Notes,
       CreatedAt: contact.CreatedAt,
       UpdatedAt: contact.UpdatedAt,
       CreatedBy: contact.CreatedBy,

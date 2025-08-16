@@ -11,7 +11,6 @@ interface ContactDetailsDrawerProps {
   open: boolean;
   onClose: () => void;
   contactId: string | null;
-  contactData?: ContactRecordWithTrainer | null;
 }
 
 interface ContactFieldProps {
@@ -39,12 +38,10 @@ export default function ContactDetailsDrawer({
   open,
   onClose,
   contactId,
-  contactData,
 }: ContactDetailsDrawerProps) {
   const { data: fetchedContactData, isLoading, error } = useContact(contactId);
 
-  // Use provided contactData if available, otherwise use fetched data
-  const contact = contactData || fetchedContactData?.contact;
+  const contact = fetchedContactData?.contact;
 
   return (
     <AppDrawer
@@ -73,9 +70,9 @@ export default function ContactDetailsDrawer({
         ) : null
       }
       body={
-        isLoading && !contactData ? (
+        isLoading ? (
           <AppLoader />
-        ) : error && !contactData ? (
+        ) : error ? (
           <div className="p-4 text-center text-red-600">
             <p>Error loading contact details</p>
             <p className="text-sm text-muted-foreground mt-1">{error.message}</p>
@@ -109,6 +106,14 @@ export default function ContactDetailsDrawer({
                     value={(contact as ContactRecordWithTrainer).TrainerEmail}
                   />
                 </>
+              )}
+
+              {contact.Notes && (
+                <ContactField
+                  label="Notes"
+                  value={contact.Notes}
+                  className="text-base whitespace-pre-wrap"
+                />
               )}
 
               <ContactField

@@ -1,6 +1,7 @@
 "use client";
 
 import AppDrawer, { DrawerProps } from "@/components/app/AppDrawer";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,34 +13,37 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import useCreateContact from "./useCreateContact";
 
 // Format phone number as user types
 function formatPhoneNumber(value: string): string {
   // Remove all non-numeric characters
-  const phoneNumber = value.replace(/[^\d]/g, '');
-  
+  const phoneNumber = value.replace(/[^\d]/g, "");
+
   // Don't format if empty
-  if (!phoneNumber) return '';
-  
+  if (!phoneNumber) return "";
+
   // Format based on length
   if (phoneNumber.length <= 3) {
     return `(${phoneNumber}`;
   } else if (phoneNumber.length <= 6) {
     return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
   } else {
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(
+      3,
+      6
+    )}-${phoneNumber.slice(6, 10)}`;
   }
 }
 
 // Validate US phone number format
 function isValidUSPhone(phone: string): boolean {
-  const cleaned = phone.replace(/[^\d]/g, '');
+  const cleaned = phone.replace(/[^\d]/g, "");
   return cleaned.length === 10;
 }
 
@@ -53,7 +57,11 @@ const contactSchema = z.object({
   phoneNumber: z
     .string()
     .min(1, "Phone number is required")
-    .refine((phone) => isValidUSPhone(phone), "Please enter a valid 10-digit US phone number"),
+    .refine(
+      (phone) => isValidUSPhone(phone),
+      "Please enter a valid 10-digit US phone number"
+    ),
+  notes: z.string().optional(),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -65,9 +73,9 @@ export default function CreateContactDrawer({
   onClose,
 }: CreateContactDrawerProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  
+
   const createContact = useCreateContact();
-  
+
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     mode: "onSubmit",
@@ -78,12 +86,28 @@ export default function CreateContactDrawer({
       lastName: "",
       email: "",
       phoneNumber: "",
+      notes: "",
     },
   });
 
+  const headerOptions = (
+    <Button
+      type="submit"
+      form="create-contact-form"
+      disabled={createContact.isPending}
+      className="md:hidden"
+    >
+      {createContact.isPending ? "Creating..." : "Create"}
+    </Button>
+  );
+
   const formBody = (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        id="create-contact-form"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6"
+      >
         {errorMessage && (
           <Alert variant="destructive">
             <AlertDescription>{errorMessage}</AlertDescription>
@@ -180,7 +204,9 @@ export default function CreateContactDrawer({
                     field.onChange(formatted);
                   }}
                   className={
-                    field.value && !isValidUSPhone(field.value) && field.value.length > 0
+                    field.value &&
+                    !isValidUSPhone(field.value) &&
+                    field.value.length > 0
                       ? "border-destructive focus:ring-destructive"
                       : ""
                   }
@@ -192,11 +218,44 @@ export default function CreateContactDrawer({
           )}
         />
 
-        <div className="flex justify-end gap-3 pt-4">
-          <Button type="button" variant="outline" onClick={handleClose} disabled={createContact.isPending}>
+        <FormField
+          control={form.control}
+          name="notes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Notes</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Add any notes about this contact..."
+                  className="min-h-[100px]"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      form.handleSubmit(onSubmit)();
+                    }
+                  }}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="hidden md:flex justify-end gap-3 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClose}
+            disabled={createContact.isPending}
+          >
             Cancel
           </Button>
-          <Button type="submit" disabled={createContact.isPending}>
+          <Button
+            form="create-contact-form"
+            type="submit"
+            disabled={createContact.isPending}
+          >
             {createContact.isPending ? "Creating..." : "Create Contact"}
           </Button>
         </div>
@@ -210,6 +269,7 @@ export default function CreateContactDrawer({
       onClose={handleClose}
       headerTitle="Create Contact"
       headerDescription="Add a new contact to your list"
+      headerOptions={headerOptions}
       body={formBody}
       size="lg"
     />
@@ -227,7 +287,7 @@ export default function CreateContactDrawer({
 
   function onSubmit(data: ContactFormData) {
     setErrorMessage(null);
-    
+
     createContact.mutate(data, {
       onSuccess: () => {
         onClose();

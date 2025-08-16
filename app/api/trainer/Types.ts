@@ -7,6 +7,7 @@ export interface ContactRecord extends DefaultFields {
   Email: string;
   PhoneNumber: string;
   TrainerID: string;
+  Notes?: string;
 }
 
 export interface CreateContactResponse {

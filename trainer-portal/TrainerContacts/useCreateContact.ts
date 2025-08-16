@@ -9,6 +9,7 @@ export interface CreateContactPayload {
   lastName: string;
   email: string;
   phoneNumber: string;
+  notes?: string;
 }
 
 export default function useCreateContact() {

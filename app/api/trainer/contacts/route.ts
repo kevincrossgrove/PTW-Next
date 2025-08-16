@@ -17,6 +17,7 @@ const createContactSchema = z.object({
       const cleaned = phone.replace(/\D/g, "");
       return cleaned.length >= 10 && cleaned.length <= 11;
     }, "Please enter a valid phone number"),
+  notes: z.string().optional(),
 });
 
 type CreateContactData = z.infer<typeof createContactSchema>;
@@ -53,6 +54,7 @@ export async function GET(request: NextRequest) {
       Email: contact.Email,
       PhoneNumber: contact.PhoneNumber,
       TrainerID: contact.TrainerID,
+      Notes: contact.Notes,
       CreatedAt: contact.CreatedAt,
       UpdatedAt: contact.UpdatedAt,
       CreatedBy: contact.CreatedBy,
@@ -109,6 +111,7 @@ export async function POST(request: NextRequest) {
       Email: validatedData.email,
       PhoneNumber: validatedData.phoneNumber,
       TrainerID: session.user.id,
+      ...(validatedData.notes && { Notes: validatedData.notes }),
     };
 
     // Create contact with default fields
