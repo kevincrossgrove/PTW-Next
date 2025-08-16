@@ -19,6 +19,30 @@ import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import useCreateContact from "./useCreateContact";
 
+// Format phone number as user types
+function formatPhoneNumber(value: string): string {
+  // Remove all non-numeric characters
+  const phoneNumber = value.replace(/[^\d]/g, '');
+  
+  // Don't format if empty
+  if (!phoneNumber) return '';
+  
+  // Format based on length
+  if (phoneNumber.length <= 3) {
+    return `(${phoneNumber}`;
+  } else if (phoneNumber.length <= 6) {
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+  } else {
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+  }
+}
+
+// Validate US phone number format
+function isValidUSPhone(phone: string): boolean {
+  const cleaned = phone.replace(/[^\d]/g, '');
+  return cleaned.length === 10;
+}
+
 const contactSchema = z.object({
   role: z.enum(["Parent", "Player", "Coach"], {
     required_error: "Please select a role",
@@ -29,12 +53,7 @@ const contactSchema = z.object({
   phoneNumber: z
     .string()
     .min(1, "Phone number is required")
-    .refine((phone) => {
-      // Remove all non-digits
-      const cleaned = phone.replace(/\D/g, "");
-      // Should be 10-11 digits (US format)
-      return cleaned.length >= 10 && cleaned.length <= 11;
-    }, "Please enter a valid phone number"),
+    .refine((phone) => isValidUSPhone(phone), "Please enter a valid 10-digit US phone number"),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -155,7 +174,17 @@ export default function CreateContactDrawer({
                 <Input
                   type="tel"
                   placeholder="(555) 123-4567"
-                  {...field}
+                  value={field.value}
+                  onChange={(e) => {
+                    const formatted = formatPhoneNumber(e.target.value);
+                    field.onChange(formatted);
+                  }}
+                  className={
+                    field.value && !isValidUSPhone(field.value) && field.value.length > 0
+                      ? "border-destructive focus:ring-destructive"
+                      : ""
+                  }
+                  maxLength={14} // (XXX) XXX-XXXX
                 />
               </FormControl>
               <FormMessage />

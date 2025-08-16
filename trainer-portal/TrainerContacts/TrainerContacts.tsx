@@ -30,6 +30,7 @@ export default function TrainerContacts() {
       id: "select",
       header: ({ table }) => (
         <Checkbox
+          className="inline-flex"
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -40,6 +41,7 @@ export default function TrainerContacts() {
       ),
       cell: ({ row }) => (
         <Checkbox
+          className="inline-flex"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"

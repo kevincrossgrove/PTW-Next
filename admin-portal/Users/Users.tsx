@@ -5,6 +5,7 @@ import DashboardPageHeader from "@/components/admin/DashboardPageHeader";
 import { AppTable } from "@/components/app/AppTable";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { columns } from "./UsersColumns";
 
 export default function Users() {
@@ -17,6 +18,8 @@ export default function Users() {
       return Array.isArray(result.data?.users) ? result.data.users : [];
     },
   });
+
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
   if (isLoading) {
     return (
@@ -39,7 +42,13 @@ export default function Users() {
   return (
     <DashboardPageContainer>
       <DashboardPageHeader title="All Users" />
-      <AppTable columns={columns} data={data || []} />
+      <AppTable 
+        columns={columns} 
+        data={data || []} 
+        enableRowSelection={true}
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
+      />
     </DashboardPageContainer>
   );
 }
