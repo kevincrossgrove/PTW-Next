@@ -22,6 +22,10 @@ export interface FetchContactResponse {
   contact: ContactRecord & { id: string };
 }
 
+export interface UpdateContactResponse {
+  contact: ContactRecord & { id: string };
+}
+
 export interface DeleteContactResponse {
   success: boolean;
 }

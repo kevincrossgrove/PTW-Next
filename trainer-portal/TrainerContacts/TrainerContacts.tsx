@@ -12,6 +12,7 @@ import DashboardPageContainer from "../../components/admin/DashboardPageContaine
 import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
 import ContactDetailsDrawer from "./ContactDetailsDrawer";
 import CreateContactDrawer from "./CreateContactDrawer";
+import EditContactDrawer from "./EditContactDrawer";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import EmailContactsDrawer from "./EmailContactsDrawer";
 import useDeleteContacts from "./useDeleteContacts";
@@ -22,6 +23,8 @@ type TrainerContact = ContactRecord & { id: string };
 export default function TrainerContacts() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [viewContactID, setViewContactID] = useState<string | null>(null);
+  const [editContactID, setEditContactID] = useState<string | null>(null);
+  const [previousViewContactID, setPreviousViewContactID] = useState<string | null>(null);
   const [isEmailDrawerOpen, setIsEmailDrawerOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -115,6 +118,28 @@ export default function TrainerContacts() {
     setViewContactID(null);
   }
 
+  function handleEditContact(contactId: string) {
+    setPreviousViewContactID(viewContactID); // Remember which contact was being viewed
+    setEditContactID(contactId);
+    setViewContactID(null); // Close view drawer if open
+  }
+
+  function handleCloseEditDrawer() {
+    setEditContactID(null);
+    setPreviousViewContactID(null);
+    // Refetch contacts when drawer closes (in case a contact was updated)
+    refetch();
+  }
+
+  function handleCancelEditDrawer() {
+    setEditContactID(null);
+    // Restore the previous view drawer if there was one
+    if (previousViewContactID) {
+      setViewContactID(previousViewContactID);
+    }
+    setPreviousViewContactID(null);
+  }
+
   function handleCloseActionBar() {
     setRowSelection({});
   }
@@ -195,6 +220,14 @@ export default function TrainerContacts() {
         open={viewContactID !== null}
         onClose={handleCloseViewDrawer}
         contactId={viewContactID}
+        onEdit={handleEditContact}
+      />
+
+      <EditContactDrawer
+        open={editContactID !== null}
+        onClose={handleCloseEditDrawer}
+        onCancel={handleCancelEditDrawer}
+        contactId={editContactID}
       />
 
       <FloatingActionBar

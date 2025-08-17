@@ -3,7 +3,7 @@
 import AppDrawer from "@/components/app/AppDrawer";
 import AppLoader from "@/components/app/AppLoader";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone } from "lucide-react";
+import { Edit, Mail, Phone } from "lucide-react";
 import { ContactRecordWithTrainer } from "@/app/api/admin/Types";
 import useContact from "./useContact";
 
@@ -11,6 +11,7 @@ interface ContactDetailsDrawerProps {
   open: boolean;
   onClose: () => void;
   contactId: string | null;
+  onEdit?: (contactId: string) => void;
 }
 
 interface ContactFieldProps {
@@ -38,6 +39,7 @@ export default function ContactDetailsDrawer({
   open,
   onClose,
   contactId,
+  onEdit,
 }: ContactDetailsDrawerProps) {
   const { data: fetchedContactData, isLoading, error } = useContact(contactId);
 
@@ -51,6 +53,15 @@ export default function ContactDetailsDrawer({
       headerOptions={
         contact ? (
           <div className="flex gap-2">
+            {onEdit && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onEdit(contact.id)}
+              >
+                <Edit size={16} />
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"
