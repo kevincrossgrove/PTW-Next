@@ -127,7 +127,7 @@ export async function PUT(
     const { role, firstName, lastName, email, phoneNumber, notes } =
       body.payload;
 
-    if (!role || !firstName || !lastName || !email || !phoneNumber) {
+    if (!role || !firstName || !lastName) {
       return NextResponse.json(null, {
         status: 400,
         statusText: "Missing required fields",
@@ -169,8 +169,8 @@ export async function PUT(
       Role: role,
       FirstName: firstName,
       LastName: lastName,
-      Email: email,
-      PhoneNumber: phoneNumber,
+      ...(email && { Email: email }),
+      ...(phoneNumber && { PhoneNumber: phoneNumber }),
       Notes: notes || null,
       UpdatedAt: new Date().toISOString(),
       UpdatedBy: session.user.id,

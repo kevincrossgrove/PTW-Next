@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { z } from "zod/v4";
 import useCreateContact from "./useCreateContact";
 
 // Format phone number as user types
@@ -48,17 +48,15 @@ function isValidUSPhone(phone: string): boolean {
 }
 
 const contactSchema = z.object({
-  role: z.enum(["Parent", "Player", "Coach"], {
-    required_error: "Please select a role",
-  }),
+  role: z.enum(["Parent", "Player", "Coach"], "Please select a role"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Please enter a valid email"),
+  email: z.email().optional().or(z.literal("")),
   phoneNumber: z
     .string()
-    .min(1, "Phone number is required")
+    .optional()
     .refine(
-      (phone) => isValidUSPhone(phone),
+      (phone) => !phone || isValidUSPhone(phone),
       "Please enter a valid 10-digit US phone number"
     ),
   notes: z.string().optional(),

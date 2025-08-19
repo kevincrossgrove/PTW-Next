@@ -7,8 +7,8 @@ export interface CreateContactPayload {
   role: "Parent" | "Player" | "Coach";
   firstName: string;
   lastName: string;
-  email: string;
-  phoneNumber: string;
+  email?: string;
+  phoneNumber?: string;
   notes?: string;
 }
 

@@ -3,6 +3,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { ContactRecordWithTrainer } from "@/app/api/admin/Types";
+import AppEmptyField from "@/components/app/AppEmptyField";
 
 export const createColumns = (onViewContact: (contactId: string) => void): ColumnDef<ContactRecordWithTrainer>[] => [
   {
@@ -42,10 +43,18 @@ export const createColumns = (onViewContact: (contactId: string) => void): Colum
   {
     accessorKey: "Email",
     header: "Email",
+    cell: ({ row }) => {
+      const email = row.getValue("Email") as string;
+      return email || <AppEmptyField size="sm" />;
+    },
   },
   {
     accessorKey: "PhoneNumber",
     header: "Phone",
+    cell: ({ row }) => {
+      const phone = row.getValue("PhoneNumber") as string;
+      return phone || <AppEmptyField size="sm" />;
+    },
   },
   {
     accessorKey: "Role",
@@ -54,9 +63,5 @@ export const createColumns = (onViewContact: (contactId: string) => void): Colum
   {
     accessorKey: "TrainerName",
     header: "Trainer",
-  },
-  {
-    accessorKey: "TrainerEmail",
-    header: "Trainer Email",
   },
 ];

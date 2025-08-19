@@ -19,6 +19,8 @@
 - [x] Document every different role (in a single md file for now)
 - [x] Temporarily improve the landing page design
 - [x] Ability to view all Contacts in the Admin Dashboard, regardless of who created them
-- [ ] Ability to edit a contact
+- [x] Ability to edit a contact
 - [x] Ability to delete contacts
 - [x] Add notes to a contact
+- [x] Add Empty Field for Application
+- [ ]

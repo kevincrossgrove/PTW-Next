@@ -64,7 +64,6 @@ export async function GET(request: NextRequest) {
             CreatedBy: 1,
             UpdatedBy: 1,
             TrainerName: "$trainer.name",
-            TrainerEmail: "$trainer.email",
           },
         },
         {
@@ -84,7 +83,6 @@ export async function GET(request: NextRequest) {
       PhoneNumber: contact.PhoneNumber,
       TrainerID: contact.TrainerID,
       TrainerName: contact.TrainerName || "Unknown",
-      TrainerEmail: contact.TrainerEmail || "",
       CreatedAt: contact.CreatedAt,
       UpdatedAt: contact.UpdatedAt,
       CreatedBy: contact.CreatedBy,

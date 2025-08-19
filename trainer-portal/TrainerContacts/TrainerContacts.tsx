@@ -3,6 +3,7 @@
 import { ContactRecord } from "@/app/api/trainer/Types";
 import { AppTable } from "@/components/app/AppTable";
 import { FloatingActionBar } from "@/components/app/FloatingActionBar";
+import AppEmptyField from "@/components/app/AppEmptyField";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
@@ -84,11 +85,18 @@ export default function TrainerContacts() {
     {
       accessorKey: "Email",
       header: "Email",
+      cell: ({ row }) => {
+        const email = row.getValue("Email") as string;
+        return email || <AppEmptyField size="sm" />;
+      },
     },
     {
       accessorKey: "PhoneNumber",
       header: "Phone",
-      cell: ({ row }) => row.getValue("PhoneNumber") || "-",
+      cell: ({ row }) => {
+        const phone = row.getValue("PhoneNumber") as string;
+        return phone || <AppEmptyField size="sm" />;
+      },
     },
     {
       accessorKey: "Role",

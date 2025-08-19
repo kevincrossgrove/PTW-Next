@@ -1,19 +1,20 @@
 import { auth } from "@/lib/auth";
-import { createDocument } from "@/lib/db-helpers";
 import { connectToDatabase } from "@/lib/connect-to-db";
+import { createDocument } from "@/lib/db-helpers";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { CreateContactResponse, FetchContactsResponse } from "../Types";
 
 const createContactSchema = z.object({
   role: z.enum(["Parent", "Player", "Coach"]),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Please enter a valid email"),
+  email: z.email().optional().or(z.literal("")),
   phoneNumber: z
     .string()
-    .min(1, "Phone number is required")
+    .optional()
     .refine((phone) => {
+      if (!phone) return true;
       const cleaned = phone.replace(/\D/g, "");
       return cleaned.length >= 10 && cleaned.length <= 11;
     }, "Please enter a valid phone number"),
@@ -108,9 +109,11 @@ export async function POST(request: NextRequest) {
       Role: validatedData.role,
       FirstName: validatedData.firstName,
       LastName: validatedData.lastName,
-      Email: validatedData.email,
-      PhoneNumber: validatedData.phoneNumber,
       TrainerID: session.user.id,
+      ...(validatedData.email && { Email: validatedData.email }),
+      ...(validatedData.phoneNumber && {
+        PhoneNumber: validatedData.phoneNumber,
+      }),
       ...(validatedData.notes && { Notes: validatedData.notes }),
     };
 

@@ -7,7 +7,7 @@ import { headers as headas } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 // Used to accept Invites
 export default async function AcceptInvitePage({

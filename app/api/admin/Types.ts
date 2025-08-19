@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface AdminInviteResponse {
   inviteID: string;
@@ -47,7 +47,7 @@ export interface UpdateUserResponse {
 export const UpdateUserSchema = z
   .object({
     name: z.string().optional(),
-    email: z.string().email().optional(),
+    email: z.email().optional(),
     emailVerified: z.boolean().optional(),
     image: z.string().nullable().optional(),
     role: z.enum(["admin", "user"]).optional(),
@@ -66,7 +66,6 @@ export interface ContactRecordWithTrainer {
   PhoneNumber: string;
   TrainerID: string;
   TrainerName: string;
-  TrainerEmail: string;
   CreatedAt: string;
   UpdatedAt: string;
   CreatedBy: string;

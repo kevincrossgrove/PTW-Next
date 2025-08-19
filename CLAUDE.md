@@ -82,7 +82,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - TypeScript throughout with strict configuration
 - ESLint configured for Next.js
 - Custom utilities in `lib/utils.ts` using clsx and tailwind-merge
-- **Zod Validation**: Always use `schema.parse()` wrapped in try-catch blocks instead of `safeParse()` for consistent error handling
+- **Zod Validation**: 
+  - Always import from `zod/v4` instead of `zod`
+  - Use `z.email()` instead of `z.string().email()` for email validation
+  - Use `schema.parse()` wrapped in try-catch blocks instead of `safeParse()` for consistent error handling
+  - For optional email fields, use `z.email().optional().or(z.literal(""))` to handle both undefined and empty string values
+  - Use `.strict()` on objects to prevent extra fields when appropriate
 - **Data Fetching**: Always use `useQuery` from @tanstack/react-query for data fetching, never use `useEffect` for this purpose
 - **Drawers**: Use `@components/app/AppDrawer.tsx` when a drawer is requested
 - **Function Placement**: Place handler functions below the JSX return statement, using function declarations instead of arrow functions

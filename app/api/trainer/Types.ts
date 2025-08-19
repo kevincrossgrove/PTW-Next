@@ -4,8 +4,8 @@ export interface ContactRecord extends DefaultFields {
   Role: "Parent" | "Player" | "Coach";
   FirstName: string;
   LastName: string;
-  Email: string;
-  PhoneNumber: string;
+  Email?: string;
+  PhoneNumber?: string;
   TrainerID: string;
   Notes?: string;
 }

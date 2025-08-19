@@ -1,10 +1,11 @@
 "use client";
 
+import { ContactRecordWithTrainer } from "@/app/api/admin/Types";
 import AppDrawer from "@/components/app/AppDrawer";
+import AppEmptyField from "@/components/app/AppEmptyField";
 import AppLoader from "@/components/app/AppLoader";
 import { Button } from "@/components/ui/button";
 import { Edit, Mail, Phone } from "lucide-react";
-import { ContactRecordWithTrainer } from "@/app/api/admin/Types";
 import useContact from "./useContact";
 
 interface ContactDetailsDrawerProps {
@@ -16,21 +17,25 @@ interface ContactDetailsDrawerProps {
 
 interface ContactFieldProps {
   label: string;
-  value: string;
+  value?: string;
   className?: string;
+  fallback?: React.ReactNode;
 }
 
 function ContactField({
   label,
   value,
   className = "text-base",
+  fallback,
 }: ContactFieldProps) {
   return (
     <div>
       <label className="text-sm font-medium text-muted-foreground">
         {label}
       </label>
-      <p className={className}>{value}</p>
+      <div className={className}>
+        {value || fallback}
+      </div>
     </div>
   );
 }
@@ -49,7 +54,9 @@ export default function ContactDetailsDrawer({
     <AppDrawer
       open={open}
       onClose={onClose}
-      headerTitle={contact ? `${contact.FirstName} ${contact.LastName}` : "Contact Details"}
+      headerTitle={
+        contact ? `${contact.FirstName} ${contact.LastName}` : "Contact Details"
+      }
       headerOptions={
         contact ? (
           <div className="flex gap-2">
@@ -86,7 +93,9 @@ export default function ContactDetailsDrawer({
         ) : error ? (
           <div className="p-4 text-center text-red-600">
             <p>Error loading contact details</p>
-            <p className="text-sm text-muted-foreground mt-1">{error.message}</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              {error.message}
+            </p>
           </div>
         ) : !contact ? (
           <div className="p-4 text-center text-muted-foreground">
@@ -95,28 +104,26 @@ export default function ContactDetailsDrawer({
         ) : (
           <div className="p-4 space-y-4">
             <div className="space-y-3">
-              <ContactField label="Email" value={contact.Email} />
+              <ContactField
+                label="Email"
+                value={contact.Email}
+                fallback={<AppEmptyField />}
+              />
 
               <ContactField
                 label="Phone Number"
-                value={contact.PhoneNumber || "Not provided"}
+                value={contact.PhoneNumber}
+                fallback={<AppEmptyField />}
               />
 
               <ContactField label="Role" value={contact.Role} />
 
               {/* Show trainer info if this is admin contact data */}
               {"TrainerName" in contact && (
-                <>
-                  <ContactField 
-                    label="Trainer" 
-                    value={(contact as ContactRecordWithTrainer).TrainerName}
-                  />
-                  
-                  <ContactField 
-                    label="Trainer Email" 
-                    value={(contact as ContactRecordWithTrainer).TrainerEmail}
-                  />
-                </>
+                <ContactField
+                  label="Trainer"
+                  value={(contact as ContactRecordWithTrainer).TrainerName}
+                />
               )}
 
               {contact.Notes && (

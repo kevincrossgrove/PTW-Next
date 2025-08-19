@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const envVariables = z.object({
   BETTER_AUTH_SECRET: z.string(), // Any string - used by better-auth library

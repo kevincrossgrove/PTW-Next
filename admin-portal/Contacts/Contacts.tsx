@@ -86,8 +86,9 @@ export default function Contacts() {
       <ContactDetailsDrawer
         open={selectedContact !== null}
         onClose={handleCloseDrawer}
-        contactId={null}
+        contactId={selectedContact?.id || null}
       />
+
     </DashboardPageContainer>
   );
 }
