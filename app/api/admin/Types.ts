@@ -77,3 +77,21 @@ export interface FetchAllContactsResponse {
     contacts: ContactRecordWithTrainer[];
   };
 }
+
+export interface BulkUpdateContactsRequest {
+  data: {
+    contactIds: string[];
+    updates: {
+      field: string;
+      value: string;
+      clearField: boolean;
+    }[];
+  };
+}
+
+export interface BulkUpdateContactsResponse {
+  data: {
+    updatedCount: number;
+    contacts: ContactRecordWithTrainer[];
+  };
+}

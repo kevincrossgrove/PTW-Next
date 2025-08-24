@@ -10,13 +10,15 @@ import { AppTable } from "@/components/app/AppTable";
 import { FloatingActionBar } from "@/components/app/FloatingActionBar";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { Mail, Trash2 } from "lucide-react";
+import { Mail, Trash2, Edit3 } from "lucide-react";
 import { useState } from "react";
 import ContactDetailsDrawer from "../../trainer-portal/TrainerContacts/ContactDetailsDrawer";
 import DeleteConfirmationDialog from "../../trainer-portal/TrainerContacts/DeleteConfirmationDialog";
 import EmailContactsDrawer from "../../trainer-portal/TrainerContacts/EmailContactsDrawer";
+import BulkUpdateContactsDrawer, { BulkUpdateData } from "./BulkUpdateContactsDrawer";
 import { createColumns } from "./ContactsColumns";
 import useDeleteContacts from "./useDeleteContacts";
+import useBulkUpdateContacts from "./useBulkUpdateContacts";
 
 export default function Contacts() {
   const { data, isLoading, error } = useQuery({
@@ -38,6 +40,7 @@ export default function Contacts() {
     useState<ContactRecordWithTrainer | null>(null);
   const [isEmailDrawerOpen, setIsEmailDrawerOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isBulkUpdateDrawerOpen, setIsBulkUpdateDrawerOpen] = useState(false);
 
   const { deleteContacts, isDeleting } = useDeleteContacts({
     onSuccess: () => {
@@ -46,6 +49,16 @@ export default function Contacts() {
     },
     onError: (error) => {
       console.error("Failed to delete contacts:", error);
+    },
+  });
+
+  const { bulkUpdateContacts, isUpdating } = useBulkUpdateContacts({
+    onSuccess: () => {
+      setRowSelection({});
+      setIsBulkUpdateDrawerOpen(false);
+    },
+    onError: (error) => {
+      console.error("Failed to update contacts:", error);
     },
   });
 
@@ -109,6 +122,15 @@ export default function Contacts() {
             <Button
               variant="ghost"
               size="sm"
+              onClick={handleBulkUpdateSelected}
+              className="gap-2 bg-green-500 hover:bg-green-600 text-white border-none sm:px-3 px-2"
+            >
+              <Edit3 size={16} />
+              <span className="hidden sm:inline">Update</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleEmailSelected}
               className="gap-2 bg-blue-500 hover:bg-blue-600 text-white border-none sm:px-3 px-2"
             >
@@ -135,6 +157,14 @@ export default function Contacts() {
         open={isEmailDrawerOpen}
         onClose={handleCloseEmailDrawer}
         contacts={selectedContacts}
+      />
+
+      <BulkUpdateContactsDrawer
+        open={isBulkUpdateDrawerOpen}
+        onClose={handleCloseBulkUpdateDrawer}
+        contacts={selectedContacts}
+        onUpdate={handleBulkUpdate}
+        isLoading={isUpdating}
       />
 
       <DeleteConfirmationDialog
@@ -187,5 +217,18 @@ export default function Contacts() {
   function handleCloseEmailDrawer() {
     setIsEmailDrawerOpen(false);
     setRowSelection({});
+  }
+
+  function handleBulkUpdateSelected() {
+    setIsBulkUpdateDrawerOpen(true);
+  }
+
+  function handleCloseBulkUpdateDrawer() {
+    setIsBulkUpdateDrawerOpen(false);
+    setRowSelection({});
+  }
+
+  function handleBulkUpdate(updateData: BulkUpdateData) {
+    bulkUpdateContacts(updateData);
   }
 }
