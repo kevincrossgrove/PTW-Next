@@ -14,38 +14,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import PhoneInput, { isValidUSPhone } from "@/components/app/PhoneInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import useCreateContact from "./useCreateContact";
 
-// Format phone number as user types
-function formatPhoneNumber(value: string): string {
-  // Remove all non-numeric characters
-  const phoneNumber = value.replace(/[^\d]/g, "");
-
-  // Don't format if empty
-  if (!phoneNumber) return "";
-
-  // Format based on length
-  if (phoneNumber.length <= 3) {
-    return `(${phoneNumber}`;
-  } else if (phoneNumber.length <= 6) {
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
-  } else {
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(
-      3,
-      6
-    )}-${phoneNumber.slice(6, 10)}`;
-  }
-}
-
-// Validate US phone number format
-function isValidUSPhone(phone: string): boolean {
-  const cleaned = phone.replace(/[^\d]/g, "");
-  return cleaned.length === 10;
-}
 
 const contactSchema = z.object({
   role: z.enum(["Parent", "Player", "Coach"], "Please select a role"),
@@ -193,22 +168,9 @@ export default function CreateContactDrawer({
             <FormItem>
               <FormLabel>Phone Number</FormLabel>
               <FormControl>
-                <Input
-                  type="tel"
-                  placeholder="(555) 123-4567"
+                <PhoneInput
                   value={field.value}
-                  onChange={(e) => {
-                    const formatted = formatPhoneNumber(e.target.value);
-                    field.onChange(formatted);
-                  }}
-                  className={
-                    field.value &&
-                    !isValidUSPhone(field.value) &&
-                    field.value.length > 0
-                      ? "border-destructive focus:ring-destructive"
-                      : ""
-                  }
-                  maxLength={14} // (XXX) XXX-XXXX
+                  onChange={field.onChange}
                 />
               </FormControl>
               <FormMessage />

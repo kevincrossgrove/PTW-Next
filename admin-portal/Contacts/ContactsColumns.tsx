@@ -1,11 +1,13 @@
 "use client";
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { ColumnDef } from "@tanstack/react-table";
 import { ContactRecordWithTrainer } from "@/app/api/admin/Types";
 import AppEmptyField from "@/components/app/AppEmptyField";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ColumnDef } from "@tanstack/react-table";
 
-export const createColumns = (onViewContact: (contactId: string) => void): ColumnDef<ContactRecordWithTrainer>[] => [
+export const createColumns = (
+  onViewContact: (contactId: string) => void
+): ColumnDef<ContactRecordWithTrainer>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -41,14 +43,6 @@ export const createColumns = (onViewContact: (contactId: string) => void): Colum
     ),
   },
   {
-    accessorKey: "Email",
-    header: "Email",
-    cell: ({ row }) => {
-      const email = row.getValue("Email") as string;
-      return email || <AppEmptyField size="sm" />;
-    },
-  },
-  {
     accessorKey: "PhoneNumber",
     header: "Phone",
     cell: ({ row }) => {
@@ -59,6 +53,14 @@ export const createColumns = (onViewContact: (contactId: string) => void): Colum
   {
     accessorKey: "Role",
     header: "Role",
+  },
+  {
+    accessorKey: "Email",
+    header: "Email",
+    cell: ({ row }) => {
+      const email = row.getValue("Email") as string;
+      return email || <AppEmptyField size="sm" />;
+    },
   },
   {
     accessorKey: "TrainerName",

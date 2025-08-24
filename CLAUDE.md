@@ -82,12 +82,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - TypeScript throughout with strict configuration
 - ESLint configured for Next.js
 - Custom utilities in `lib/utils.ts` using clsx and tailwind-merge
-- **Zod Validation**: 
+- **Zod Validation**:
   - Always import from `zod/v4` instead of `zod`
   - Use `z.email()` instead of `z.string().email()` for email validation
   - Use `schema.parse()` wrapped in try-catch blocks instead of `safeParse()` for consistent error handling
   - For optional email fields, use `z.email().optional().or(z.literal(""))` to handle both undefined and empty string values
   - Use `.strict()` on objects to prevent extra fields when appropriate
+  - **Error Messages**: Always provide descriptive, user-friendly error messages that include examples when helpful (e.g., "Please enter a valid email address (e.g., name@example.com)" instead of generic messages like "Invalid input")
 - **Data Fetching**: Always use `useQuery` from @tanstack/react-query for data fetching, never use `useEffect` for this purpose
 - **Drawers**: Use `@components/app/AppDrawer.tsx` when a drawer is requested
 - **Function Placement**: Place handler functions below the JSX return statement, using function declarations instead of arrow functions
@@ -97,6 +98,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **TypeScript Types**: Never use `any` type unless absolutely necessary. Always provide proper type definitions with explicit interfaces or type unions. Use optional properties (`property?`) and union types instead of `any`
 
 ### MongoDB Naming Conventions
+
 - **Collection Names**: Should be Capital and Plural (e.g., `Users`, `Contacts`, `TrainingPlans`)
 - **Exception**: better-auth generated collections use their default naming
 - **Field Names**: Should be Capital (e.g., `FirstName`, `LastName`, `Email`)

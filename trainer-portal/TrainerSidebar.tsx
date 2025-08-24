@@ -9,7 +9,7 @@ import {
   SidebarGroupLabel,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { ChevronDown, Home, LayoutDashboard, UserSearch } from "lucide-react";
+import { ChevronDown, Home, LayoutDashboard, User, UserSearch } from "lucide-react";
 import AppSidebarPageItem from "./AppSidebarPageItem";
 
 export default function TrainerSidebar() {
@@ -22,6 +22,11 @@ export default function TrainerSidebar() {
           icon={<UserSearch />}
           title="My Contacts"
           to="/trainer/contacts"
+        />
+        <AppSidebarPageItem
+          icon={<User />}
+          title="My Profile"
+          to="/trainer/profile"
         />
       </SidebarGroup>
       {/* <Collapsible defaultOpen className="group/collapsible">

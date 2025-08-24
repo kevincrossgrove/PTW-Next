@@ -1,9 +1,9 @@
 "use client";
 
 import { ContactRecord } from "@/app/api/trainer/Types";
+import AppEmptyField from "@/components/app/AppEmptyField";
 import { AppTable } from "@/components/app/AppTable";
 import { FloatingActionBar } from "@/components/app/FloatingActionBar";
-import AppEmptyField from "@/components/app/AppEmptyField";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
@@ -13,8 +13,8 @@ import DashboardPageContainer from "../../components/admin/DashboardPageContaine
 import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
 import ContactDetailsDrawer from "./ContactDetailsDrawer";
 import CreateContactDrawer from "./CreateContactDrawer";
-import EditContactDrawer from "./EditContactDrawer";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
+import EditContactDrawer from "./EditContactDrawer";
 import EmailContactsDrawer from "./EmailContactsDrawer";
 import useDeleteContacts from "./useDeleteContacts";
 import useFetchContacts from "./useFetchContacts";
@@ -25,7 +25,9 @@ export default function TrainerContacts() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [viewContactID, setViewContactID] = useState<string | null>(null);
   const [editContactID, setEditContactID] = useState<string | null>(null);
-  const [previousViewContactID, setPreviousViewContactID] = useState<string | null>(null);
+  const [previousViewContactID, setPreviousViewContactID] = useState<
+    string | null
+  >(null);
   const [isEmailDrawerOpen, setIsEmailDrawerOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -40,10 +42,6 @@ export default function TrainerContacts() {
       console.error("Failed to delete contacts:", error);
     },
   });
-
-  function handleViewContact(contactId: string) {
-    setViewContactID(contactId);
-  }
 
   const columns: ColumnDef<TrainerContact>[] = [
     {
@@ -83,14 +81,6 @@ export default function TrainerContacts() {
       ),
     },
     {
-      accessorKey: "Email",
-      header: "Email",
-      cell: ({ row }) => {
-        const email = row.getValue("Email") as string;
-        return email || <AppEmptyField size="sm" />;
-      },
-    },
-    {
       accessorKey: "PhoneNumber",
       header: "Phone",
       cell: ({ row }) => {
@@ -103,6 +93,14 @@ export default function TrainerContacts() {
       header: "Role",
     },
     {
+      accessorKey: "Email",
+      header: "Email",
+      cell: ({ row }) => {
+        const email = row.getValue("Email") as string;
+        return email || <AppEmptyField size="sm" />;
+      },
+    },
+    {
       accessorKey: "CreatedAt",
       header: "Added",
       cell: ({ row }) => {
@@ -111,75 +109,6 @@ export default function TrainerContacts() {
       },
     },
   ];
-
-  function handleCreateContact() {
-    setIsDrawerOpen(true);
-  }
-
-  function handleCloseDrawer() {
-    setIsDrawerOpen(false);
-    // Refetch contacts when drawer closes (in case a contact was created)
-    refetch();
-  }
-
-  function handleCloseViewDrawer() {
-    setViewContactID(null);
-  }
-
-  function handleEditContact(contactId: string) {
-    setPreviousViewContactID(viewContactID); // Remember which contact was being viewed
-    setEditContactID(contactId);
-    setViewContactID(null); // Close view drawer if open
-  }
-
-  function handleCloseEditDrawer() {
-    setEditContactID(null);
-    setPreviousViewContactID(null);
-    // Refetch contacts when drawer closes (in case a contact was updated)
-    refetch();
-  }
-
-  function handleCancelEditDrawer() {
-    setEditContactID(null);
-    // Restore the previous view drawer if there was one
-    if (previousViewContactID) {
-      setViewContactID(previousViewContactID);
-    }
-    setPreviousViewContactID(null);
-  }
-
-  function handleCloseActionBar() {
-    setRowSelection({});
-  }
-
-  function handleDeleteSelected() {
-    setIsDeleteDialogOpen(true);
-  }
-
-  function handleConfirmDelete() {
-    const selectedIndices = Object.keys(rowSelection);
-
-    const selectedContactIds = selectedIndices
-      .map((index) => contactsData?.contacts[parseInt(index)]?.id)
-      .filter((id): id is string => Boolean(id));
-
-    if (selectedContactIds.length > 0) {
-      deleteContacts(selectedContactIds);
-    }
-  }
-
-  function handleCloseDeleteDialog() {
-    setIsDeleteDialogOpen(false);
-  }
-
-  function handleEmailSelected() {
-    setIsEmailDrawerOpen(true);
-  }
-
-  function handleCloseEmailDrawer() {
-    setIsEmailDrawerOpen(false);
-    setRowSelection({});
-  }
 
   const selectedCount = Object.keys(rowSelection).length;
   const selectedContacts =
@@ -284,4 +213,77 @@ export default function TrainerContacts() {
       />
     </DashboardPageContainer>
   );
+
+  function handleViewContact(contactId: string) {
+    setViewContactID(contactId);
+  }
+
+  function handleCreateContact() {
+    setIsDrawerOpen(true);
+  }
+
+  function handleCloseDrawer() {
+    setIsDrawerOpen(false);
+    // Refetch contacts when drawer closes (in case a contact was created)
+    refetch();
+  }
+
+  function handleCloseViewDrawer() {
+    setViewContactID(null);
+  }
+
+  function handleEditContact(contactId: string) {
+    setPreviousViewContactID(viewContactID); // Remember which contact was being viewed
+    setEditContactID(contactId);
+    setViewContactID(null); // Close view drawer if open
+  }
+
+  function handleCloseEditDrawer() {
+    setEditContactID(null);
+    setPreviousViewContactID(null);
+    // Refetch contacts when drawer closes (in case a contact was updated)
+    refetch();
+  }
+
+  function handleCancelEditDrawer() {
+    setEditContactID(null);
+    // Restore the previous view drawer if there was one
+    if (previousViewContactID) {
+      setViewContactID(previousViewContactID);
+    }
+    setPreviousViewContactID(null);
+  }
+
+  function handleCloseActionBar() {
+    setRowSelection({});
+  }
+
+  function handleDeleteSelected() {
+    setIsDeleteDialogOpen(true);
+  }
+
+  function handleConfirmDelete() {
+    const selectedIndices = Object.keys(rowSelection);
+
+    const selectedContactIds = selectedIndices
+      .map((index) => contactsData?.contacts[parseInt(index)]?.id)
+      .filter((id): id is string => Boolean(id));
+
+    if (selectedContactIds.length > 0) {
+      deleteContacts(selectedContactIds);
+    }
+  }
+
+  function handleCloseDeleteDialog() {
+    setIsDeleteDialogOpen(false);
+  }
+
+  function handleEmailSelected() {
+    setIsEmailDrawerOpen(true);
+  }
+
+  function handleCloseEmailDrawer() {
+    setIsEmailDrawerOpen(false);
+    setRowSelection({});
+  }
 }

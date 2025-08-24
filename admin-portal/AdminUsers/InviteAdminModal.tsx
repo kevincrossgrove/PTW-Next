@@ -14,7 +14,7 @@ export default function InviteAdminModal({
   open,
   onClose,
 }: InviteAdminModalProps) {
-  const [inviteAdminEmail] = useState("kevin.crossgrove@growthcloud.com"); // TODO: Remove my email, when Amazon SES API is implemented
+  const [inviteAdminEmail] = useState(""); // Removed hardcoded email as requested in review
   const [invitingAdmin, setInvitingAdmin] = useState(false);
   const [error, setError] = useState("");
 
