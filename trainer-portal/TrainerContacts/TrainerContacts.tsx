@@ -41,10 +41,6 @@ export default function TrainerContacts() {
     },
   });
 
-  function handleViewContact(contactId: string) {
-    setViewContactID(contactId);
-  }
-
   const columns: ColumnDef<TrainerContact>[] = [
     {
       id: "select",
@@ -111,75 +107,6 @@ export default function TrainerContacts() {
       },
     },
   ];
-
-  function handleCreateContact() {
-    setIsDrawerOpen(true);
-  }
-
-  function handleCloseDrawer() {
-    setIsDrawerOpen(false);
-    // Refetch contacts when drawer closes (in case a contact was created)
-    refetch();
-  }
-
-  function handleCloseViewDrawer() {
-    setViewContactID(null);
-  }
-
-  function handleEditContact(contactId: string) {
-    setPreviousViewContactID(viewContactID); // Remember which contact was being viewed
-    setEditContactID(contactId);
-    setViewContactID(null); // Close view drawer if open
-  }
-
-  function handleCloseEditDrawer() {
-    setEditContactID(null);
-    setPreviousViewContactID(null);
-    // Refetch contacts when drawer closes (in case a contact was updated)
-    refetch();
-  }
-
-  function handleCancelEditDrawer() {
-    setEditContactID(null);
-    // Restore the previous view drawer if there was one
-    if (previousViewContactID) {
-      setViewContactID(previousViewContactID);
-    }
-    setPreviousViewContactID(null);
-  }
-
-  function handleCloseActionBar() {
-    setRowSelection({});
-  }
-
-  function handleDeleteSelected() {
-    setIsDeleteDialogOpen(true);
-  }
-
-  function handleConfirmDelete() {
-    const selectedIndices = Object.keys(rowSelection);
-
-    const selectedContactIds = selectedIndices
-      .map((index) => contactsData?.contacts[parseInt(index)]?.id)
-      .filter((id): id is string => Boolean(id));
-
-    if (selectedContactIds.length > 0) {
-      deleteContacts(selectedContactIds);
-    }
-  }
-
-  function handleCloseDeleteDialog() {
-    setIsDeleteDialogOpen(false);
-  }
-
-  function handleEmailSelected() {
-    setIsEmailDrawerOpen(true);
-  }
-
-  function handleCloseEmailDrawer() {
-    setIsEmailDrawerOpen(false);
-    setRowSelection({});
-  }
 
   const selectedCount = Object.keys(rowSelection).length;
   const selectedContacts =
@@ -284,4 +211,77 @@ export default function TrainerContacts() {
       />
     </DashboardPageContainer>
   );
+
+  function handleViewContact(contactId: string) {
+    setViewContactID(contactId);
+  }
+
+  function handleCreateContact() {
+    setIsDrawerOpen(true);
+  }
+
+  function handleCloseDrawer() {
+    setIsDrawerOpen(false);
+    // Refetch contacts when drawer closes (in case a contact was created)
+    refetch();
+  }
+
+  function handleCloseViewDrawer() {
+    setViewContactID(null);
+  }
+
+  function handleEditContact(contactId: string) {
+    setPreviousViewContactID(viewContactID); // Remember which contact was being viewed
+    setEditContactID(contactId);
+    setViewContactID(null); // Close view drawer if open
+  }
+
+  function handleCloseEditDrawer() {
+    setEditContactID(null);
+    setPreviousViewContactID(null);
+    // Refetch contacts when drawer closes (in case a contact was updated)
+    refetch();
+  }
+
+  function handleCancelEditDrawer() {
+    setEditContactID(null);
+    // Restore the previous view drawer if there was one
+    if (previousViewContactID) {
+      setViewContactID(previousViewContactID);
+    }
+    setPreviousViewContactID(null);
+  }
+
+  function handleCloseActionBar() {
+    setRowSelection({});
+  }
+
+  function handleDeleteSelected() {
+    setIsDeleteDialogOpen(true);
+  }
+
+  function handleConfirmDelete() {
+    const selectedIndices = Object.keys(rowSelection);
+
+    const selectedContactIds = selectedIndices
+      .map((index) => contactsData?.contacts[parseInt(index)]?.id)
+      .filter((id): id is string => Boolean(id));
+
+    if (selectedContactIds.length > 0) {
+      deleteContacts(selectedContactIds);
+    }
+  }
+
+  function handleCloseDeleteDialog() {
+    setIsDeleteDialogOpen(false);
+  }
+
+  function handleEmailSelected() {
+    setIsEmailDrawerOpen(true);
+  }
+
+  function handleCloseEmailDrawer() {
+    setIsEmailDrawerOpen(false);
+    setRowSelection({});
+  }
 }
