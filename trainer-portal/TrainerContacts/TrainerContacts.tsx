@@ -1,9 +1,9 @@
 "use client";
 
 import { ContactRecord } from "@/app/api/trainer/Types";
+import AppEmptyField from "@/components/app/AppEmptyField";
 import { AppTable } from "@/components/app/AppTable";
 import { FloatingActionBar } from "@/components/app/FloatingActionBar";
-import AppEmptyField from "@/components/app/AppEmptyField";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
@@ -13,8 +13,8 @@ import DashboardPageContainer from "../../components/admin/DashboardPageContaine
 import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
 import ContactDetailsDrawer from "./ContactDetailsDrawer";
 import CreateContactDrawer from "./CreateContactDrawer";
-import EditContactDrawer from "./EditContactDrawer";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
+import EditContactDrawer from "./EditContactDrawer";
 import EmailContactsDrawer from "./EmailContactsDrawer";
 import useDeleteContacts from "./useDeleteContacts";
 import useFetchContacts from "./useFetchContacts";
@@ -25,7 +25,9 @@ export default function TrainerContacts() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [viewContactID, setViewContactID] = useState<string | null>(null);
   const [editContactID, setEditContactID] = useState<string | null>(null);
-  const [previousViewContactID, setPreviousViewContactID] = useState<string | null>(null);
+  const [previousViewContactID, setPreviousViewContactID] = useState<
+    string | null
+  >(null);
   const [isEmailDrawerOpen, setIsEmailDrawerOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -79,14 +81,6 @@ export default function TrainerContacts() {
       ),
     },
     {
-      accessorKey: "Email",
-      header: "Email",
-      cell: ({ row }) => {
-        const email = row.getValue("Email") as string;
-        return email || <AppEmptyField size="sm" />;
-      },
-    },
-    {
       accessorKey: "PhoneNumber",
       header: "Phone",
       cell: ({ row }) => {
@@ -97,6 +91,14 @@ export default function TrainerContacts() {
     {
       accessorKey: "Role",
       header: "Role",
+    },
+    {
+      accessorKey: "Email",
+      header: "Email",
+      cell: ({ row }) => {
+        const email = row.getValue("Email") as string;
+        return email || <AppEmptyField size="sm" />;
+      },
     },
     {
       accessorKey: "CreatedAt",
