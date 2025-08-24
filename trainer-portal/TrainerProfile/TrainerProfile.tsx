@@ -10,7 +10,7 @@ import { AppAlertDestructive } from "@/components/app/AppAlertDestructive";
 import AppLoader from "@/components/app/AppLoader";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import DashboardPageContainer from "../../components/admin/DashboardPageContainer";
 import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
@@ -42,10 +42,12 @@ export default function TrainerProfile() {
       },
     });
 
-  useEffect(() => {
-    if (!profileData?.profile || formData) return;
+  // Memoize the profile to prevent unnecessary re-renders
+  const profile = useMemo(() => profileData?.profile, [profileData?.profile]);
 
-    const profile = profileData.profile;
+  useEffect(() => {
+    if (!profile || formData) return;
+
     setFormData({
       DisplayName: profile.DisplayName,
       ProfilePicture: profile.ProfilePicture,
@@ -60,7 +62,7 @@ export default function TrainerProfile() {
       Email: profile.Email,
       Location: profile.Location,
     });
-  }, [profileData, formData]);
+  }, [profile]);
 
   if (isLoading) {
     return (

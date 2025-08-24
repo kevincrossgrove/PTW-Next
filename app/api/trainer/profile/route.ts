@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/connect-to-db";
 import { createDocument, updateDocument } from "@/lib/db-helpers";
+import { createDefaultProfile } from "@/lib/trainer-defaults";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod/v4";
 import { FetchTrainerProfileResponse, UpdateTrainerProfileResponse, TrainerProfile } from "../Types";
@@ -9,6 +10,9 @@ import { DefaultFields } from "@/lib/db-helpers";
 const timeSlotSchema = z.object({
   StartTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format"),
   EndTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format"),
+}).refine((data) => data.StartTime < data.EndTime, {
+  message: "End time must be after start time",
+  path: ["EndTime"],
 });
 
 const dayAvailabilitySchema = z.object({
@@ -49,33 +53,6 @@ const updateProfileSchema = z.object({
   }),
 });
 
-function createDefaultProfile(trainerID: string, displayName: string): Omit<TrainerProfile, keyof DefaultFields> {
-  return {
-    TrainerID: trainerID,
-    DisplayName: displayName,
-    DefaultAvailability: {
-      Monday: { IsAvailable: true, TimeSlots: [{ StartTime: "09:00", EndTime: "17:00" }] },
-      Tuesday: { IsAvailable: true, TimeSlots: [{ StartTime: "09:00", EndTime: "17:00" }] },
-      Wednesday: { IsAvailable: true, TimeSlots: [{ StartTime: "09:00", EndTime: "17:00" }] },
-      Thursday: { IsAvailable: true, TimeSlots: [{ StartTime: "09:00", EndTime: "17:00" }] },
-      Friday: { IsAvailable: true, TimeSlots: [{ StartTime: "09:00", EndTime: "17:00" }] },
-      Saturday: { IsAvailable: false, TimeSlots: [] },
-      Sunday: { IsAvailable: false, TimeSlots: [] },
-    },
-    DefaultSessionDuration: 60,
-    DefaultBufferTime: 15,
-    SessionTypes: [
-      {
-        TypeName: "1-on-1 Training",
-        Duration: 60,
-        MaxParticipants: 1,
-        IsActive: true,
-      },
-    ],
-    BookingWindowDays: 14,
-    RequireApproval: false,
-  };
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -103,7 +80,7 @@ export async function GET(request: NextRequest) {
       const defaultProfileData = createDefaultProfile(
         session.user.id,
         session.user.name || "Trainer"
-      );
+      ) as Omit<TrainerProfile, keyof DefaultFields>;
 
       const { document: createdProfile } = await createDocument({
         collectionName: "TrainerProfiles",
@@ -168,10 +145,15 @@ export async function PUT(request: NextRequest) {
     let validatedData;
     try {
       validatedData = updateProfileSchema.parse(body);
-    } catch {
+    } catch (error) {
+      console.error("Profile validation failed:", error);
+      const errorMessage = error instanceof z.ZodError 
+        ? `Validation error: ${error.issues[0].message}` 
+        : "Invalid data provided";
+      
       return NextResponse.json(null, {
         status: 400,
-        statusText: "Invalid data provided",
+        statusText: errorMessage,
       });
     }
 

@@ -39,7 +39,7 @@ export async function PUT(request: NextRequest) {
     const updateOperations = [];
 
     for (const contactId of contactIds) {
-      const updateDoc: Record<string, string> = {
+      const updateDoc: Record<string, string | number | boolean> = {
         UpdatedAt: new Date().toISOString(),
         UpdatedBy: session.user.id,
       };
@@ -49,20 +49,20 @@ export async function PUT(request: NextRequest) {
         const { field, value, clearField } = update;
 
         // Validate field name and permissions
-        const allowedFields = {
+        const allowedFields: Record<string, { canUpdate: boolean; canClear: boolean }> = {
           Role: { canUpdate: true, canClear: true },
           Email: { canUpdate: false, canClear: true },
           PhoneNumber: { canUpdate: false, canClear: true },
         };
         
-        if (!allowedFields[field as keyof typeof allowedFields]) {
+        if (!allowedFields[field]) {
           return NextResponse.json(null, {
             status: 400,
             statusText: `Invalid field: ${field}`,
           });
         }
 
-        const fieldConfig = allowedFields[field as keyof typeof allowedFields];
+        const fieldConfig = allowedFields[field];
         
         // Check if trying to update a clear-only field
         if (!clearField && !fieldConfig.canUpdate) {
