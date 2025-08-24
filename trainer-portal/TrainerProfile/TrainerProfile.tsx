@@ -10,12 +10,12 @@ import { AppAlertDestructive } from "@/components/app/AppAlertDestructive";
 import AppLoader from "@/components/app/AppLoader";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import DashboardPageContainer from "../../components/admin/DashboardPageContainer";
 import DashboardPageHeader from "../../components/admin/DashboardPageHeader";
 import AvailabilitySection from "./AvailabilitySection";
-import BasicInformationSection from "./BasicInformationSection";
+import BasicInformationSection, { validateBasicInfo, type BasicInfoValidationResult } from "./BasicInformationSection";
 import SessionSettingsSection from "./SessionSettingsSection";
 import SessionTypesSection from "./SessionTypesSection";
 import useTrainerProfile from "./useTrainerProfile";
@@ -30,23 +30,24 @@ export default function TrainerProfile() {
   const { data: profileData, isLoading, error } = useTrainerProfile();
   const [formData, setFormData] = useState<FormData | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [validationResult, setValidationResult] = useState<BasicInfoValidationResult>({ isValid: true, errors: {} });
 
   const { mutate: updateProfile, isPending: isUpdating } =
     useUpdateTrainerProfile({
       onSuccess: () => {
         toast.success("Profile updated successfully!");
         setHasChanges(false);
+        setValidationResult({ isValid: true, errors: {} });
       },
       onError: (error) => {
         toast.error(error.message || "Failed to update profile");
       },
     });
 
-  // Memoize the profile to prevent unnecessary re-renders
-  const profile = useMemo(() => profileData?.profile, [profileData?.profile]);
-
   useEffect(() => {
-    if (!profile || formData) return;
+    const profile = profileData?.profile;
+
+    if (!profile) return;
 
     setFormData({
       DisplayName: profile.DisplayName,
@@ -62,7 +63,7 @@ export default function TrainerProfile() {
       Email: profile.Email,
       Location: profile.Location,
     });
-  }, [profile]);
+  }, [profileData?.profile]);
 
   if (isLoading) {
     return (
@@ -113,6 +114,7 @@ export default function TrainerProfile() {
           onInputChange={(field, value) =>
             handleInputChange(field as keyof FormData, value)
           }
+          validationErrors={validationResult.errors}
         />
 
         <AvailabilitySection
@@ -315,6 +317,15 @@ export default function TrainerProfile() {
 
   function handleSave() {
     if (!formData) return;
+
+    const validation = validateBasicInfo(formData);
+    setValidationResult(validation);
+
+    if (!validation.isValid) {
+      toast.error("Please fix the validation errors before saving");
+      return;
+    }
+
     updateProfile(formData);
   }
 }
